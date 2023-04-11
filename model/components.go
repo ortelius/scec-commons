@@ -4,7 +4,7 @@ import "encoding/json"
 
 type Components struct {
 	Key        string             `json:"_key,omitempty"`
-	NftJson    string             `json:"_json,omitempty"`
+	NftJSON    string             `json:"_json,omitempty"`
 	Components []ComponentVersion `json:"components,omitempty"`
 }
 
@@ -22,9 +22,9 @@ func (obj *Components) MarshalNFT(cid2json map[string]string) []byte {
 	}
 
 	data, _ := json.Marshal(complist)
-	obj.NftJson = string(data)
+	obj.NftJSON = string(data)
 	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJson // Add cid=json for persisting later
+	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
 
 	return data
 }
@@ -32,14 +32,14 @@ func (obj *Components) MarshalNFT(cid2json map[string]string) []byte {
 func (obj *Components) UnmarshalNFT(cid2json map[string]string) {
 	var comps Components // define domain object to marshal into
 	var exists bool
-	var NftJson string
+	var NftJSON string
 
 	// get the json from storage
-	if NftJson, exists = cid2json[obj.Key]; exists {
-		obj.NftJson = NftJson // Set the nft json for the object
+	if NftJSON, exists = cid2json[obj.Key]; exists {
+		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJson), &comps) // Convert the nft json into the domain object
+	json.Unmarshal([]byte(obj.NftJSON), &comps) // Convert the nft json into the domain object
 
 	// Deep Copy
 	obj.Components = make([]ComponentVersion, 0)

@@ -25,14 +25,14 @@ func TestGroup(t *testing.T) {
 
 	json.Unmarshal(jsonObj, &group2nft) // convert json string into the user object
 	group2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", group2nft.Key, group2nft.NftJson)
-	assert.Equal(t, expected, group2nft.NftJson, "check nft json against expected results")
+	// fmt.Printf("%s=%s\n", group2nft.Key, group2nft.NftJSON)
+	assert.Equal(t, expected, group2nft.NftJSON, "check nft json against expected results")
 
 	var nft2user Group // define user object to marshal into
 
-	nft2user.NftJson = expected     // set the nft json
+	nft2user.NftJSON = expected     // set the nft json
 	nft2user.UnmarshalNFT(cid2json) // convert the json string into the user object
 	nft2user.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, nft2user.NftJson, "check unmarshalled user against expected results")
+	assert.Equal(t, expected, nft2user.NftJSON, "check unmarshalled user against expected results")
 
 }

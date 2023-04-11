@@ -7,7 +7,7 @@ import (
 
 type ComponentVersionDetails struct {
 	Key             string          `json:"_key,omitempty"`
-	NftJson         string          `json:"_json,omitempty"`
+	NftJSON         string          `json:"_json,omitempty"`
 	Applications    Applications    `json:"applications,omitempty"`
 	Attrs           CompAttrs       `json:"attrs,omitempty"`
 	AuditLog        AuditLog        `json:"autditlog,omitempty"`
@@ -20,8 +20,8 @@ type ComponentVersionDetails struct {
 	Name            string          `json:"name"`
 	Owner           User            `json:"owner"`
 	Packages        Packages        `json:"packages,omitempty"`
-	Parent_Key      string          `json:"parent_key,omitempty"`
-	Predecessor_Key string          `json:"predecessor_key,omitempty"`
+	ParentKey       string          `json:"parent_key,omitempty"`
+	PredecessorKey  string          `json:"predecessor_key,omitempty"`
 	Providing       Providing       `json:"providing,omitempty"`
 	Readme          Readme          `json:"readme,omitempty"`
 	Swagger         Swagger         `json:"swagger,omitempty"`
@@ -45,8 +45,8 @@ func (obj *ComponentVersionDetails) MarshalNFT(cid2json map[string]string) []byt
 		ObjType         string    `json:"objtype"`
 		Owner           NFT       `json:"owner"`
 		Packages        NFT       `json:"packages,omitempty"`
-		Parent_Key      string    `json:"parent_key,omitempty"`
-		Predecessor_Key string    `json:"predecessor_key,omitempty"`
+		ParentKey       string    `json:"parent_key,omitempty"`
+		PredecessorKey  string    `json:"predecessor_key,omitempty"`
 		Providing       NFT       `json:"providing,omitempty"`
 		Readme          NFT       `json:"readme,omitempty"`
 		Swagger         NFT       `json:"swagger,omitempty"`
@@ -65,17 +65,17 @@ func (obj *ComponentVersionDetails) MarshalNFT(cid2json map[string]string) []byt
 		ObjType:         "ComponentVersionDetails",
 		Owner:           new(NFT).Init(obj.Owner.MarshalNFT(cid2json)),
 		Packages:        new(NFT).Init(obj.Packages.MarshalNFT(cid2json)),
-		Parent_Key:      obj.Parent_Key,
-		Predecessor_Key: obj.Predecessor_Key,
+		ParentKey:       obj.ParentKey,
+		PredecessorKey:  obj.PredecessorKey,
 		Providing:       new(NFT).Init(obj.Providing.MarshalNFT(cid2json)),
 		Readme:          new(NFT).Init(obj.Readme.MarshalNFT(cid2json)),
 		Swagger:         new(NFT).Init(obj.Swagger.MarshalNFT(cid2json)),
 		Vulnerabilities: new(NFT).Init(obj.Vulnerabilities.MarshalNFT(cid2json)),
 	})
 
-	obj.NftJson = string(data)
+	obj.NftJSON = string(data)
 	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJson // Add cid=json for persisting later
+	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
 
 	return data
 }
@@ -83,14 +83,14 @@ func (obj *ComponentVersionDetails) MarshalNFT(cid2json map[string]string) []byt
 func (obj *ComponentVersionDetails) UnmarshalNFT(cid2json map[string]string) {
 	var compver ComponentVersionDetails // define domain object to marshal into
 	var exists bool
-	var NftJson string
+	var NftJSON string
 
 	// get the json from storage
-	if NftJson, exists = cid2json[obj.Key]; exists {
-		obj.NftJson = NftJson // Set the nft json for the object
+	if NftJSON, exists = cid2json[obj.Key]; exists {
+		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJson), &compver) // Convert the nft json into the domain object
+	json.Unmarshal([]byte(obj.NftJSON), &compver) // Convert the nft json into the domain object
 
 	// Deep Copy
 	//	obj.Applications.Key = compver.Applications.Key
@@ -126,8 +126,8 @@ func (obj *ComponentVersionDetails) UnmarshalNFT(cid2json map[string]string) {
 	obj.Packages.Key = compver.Packages.Key
 	obj.Packages.UnmarshalNFT(cid2json)
 
-	obj.Parent_Key = compver.Parent_Key
-	obj.Predecessor_Key = compver.Predecessor_Key
+	obj.ParentKey = compver.ParentKey
+	obj.PredecessorKey = compver.PredecessorKey
 
 	obj.Providing.Key = compver.Providing.Key
 	obj.Providing.UnmarshalNFT(cid2json)

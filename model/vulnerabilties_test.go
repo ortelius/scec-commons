@@ -30,14 +30,14 @@ func TestVulnerabilities(t *testing.T) {
 
 	json.Unmarshal(jsonObj, &vulns2nft) // convert json string into the user object
 	vulns2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", vulns2nft.Key, vulns2nft.NftJson)
-	assert.Equal(t, expected, vulns2nft.NftJson, "check nft json against expected results")
+	// fmt.Printf("%s=%s\n", vulns2nft.Key, vulns2nft.NftJSON)
+	assert.Equal(t, expected, vulns2nft.NftJSON, "check nft json against expected results")
 
 	var nft2vulns Vulnerabilities // define user object to marshal into
 
-	nft2vulns.NftJson = expected     // set the nft json
+	nft2vulns.NftJSON = expected     // set the nft json
 	nft2vulns.UnmarshalNFT(cid2json) // convert the json string into the user object
 	nft2vulns.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, nft2vulns.NftJson, "check unmarshalled user against expected results")
+	assert.Equal(t, expected, nft2vulns.NftJSON, "check unmarshalled user against expected results")
 
 }

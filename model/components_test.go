@@ -41,14 +41,14 @@ func TestComponents(t *testing.T) {
 
 	json.Unmarshal(jsonObj, &comps2nft) // convert json string into the user object
 	comps2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", comps2nft.Key, comps2nft.NftJson)
-	assert.Equal(t, comps2nft.NftJson, expected, "check nft json against expected results")
+	// fmt.Printf("%s=%s\n", comps2nft.Key, comps2nft.NftJSON)
+	assert.Equal(t, comps2nft.NftJSON, expected, "check nft json against expected results")
 
 	var nft2comps Components // define user object to marshal into
 
-	nft2comps.NftJson = expected     // set the nft json
+	nft2comps.NftJSON = expected     // set the nft json
 	nft2comps.UnmarshalNFT(cid2json) // convert the json string into the user object
 	nft2comps.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, nft2comps.NftJson, expected, "check unmarshalled user against expected results")
+	assert.Equal(t, nft2comps.NftJSON, expected, "check unmarshalled user against expected results")
 
 }

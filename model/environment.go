@@ -7,7 +7,7 @@ import (
 
 type Environment struct {
 	Key     string    `json:"_key,omitempty"`
-	NftJson string    `json:"_json,omitempty"`
+	NftJSON string    `json:"_json,omitempty"`
 	Created time.Time `json:"created"`
 	Creator User      `json:"creator"`
 	Domain  Domain    `json:"domain"`
@@ -34,9 +34,9 @@ func (obj *Environment) MarshalNFT(cid2json map[string]string) []byte {
 		Owner:   new(NFT).Init(obj.Owner.MarshalNFT(cid2json)),
 	})
 
-	obj.NftJson = string(data)
+	obj.NftJSON = string(data)
 	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJson // Add cid=json for persisting later
+	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
 
 	return data
 }
@@ -44,14 +44,14 @@ func (obj *Environment) MarshalNFT(cid2json map[string]string) []byte {
 func (obj *Environment) UnmarshalNFT(cid2json map[string]string) {
 	var environment Environment
 	var exists bool
-	var NftJson string
+	var NftJSON string
 
 	// get the json from storage
-	if NftJson, exists = cid2json[obj.Key]; exists {
-		obj.NftJson = NftJson // Set the nft json for the object
+	if NftJSON, exists = cid2json[obj.Key]; exists {
+		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJson), &environment)
+	json.Unmarshal([]byte(obj.NftJSON), &environment)
 
 	// Deep Copy
 	obj.Created = environment.Created

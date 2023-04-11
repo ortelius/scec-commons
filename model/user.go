@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	Key      string `json:"_key,omitempty"`
-	NftJson  string `json:"_json,omitempty"`
+	NftJSON  string `json:"_json,omitempty"`
 	Name     string `json:"name"`
 	Domain   Domain `json:"domain"`
 	Email    string `json:"email,omitempty"`
@@ -33,9 +33,9 @@ func (obj *User) MarshalNFT(cid2json map[string]string) []byte {
 		Realname: obj.Realname,                                   // Copy
 	})
 
-	obj.NftJson = string(data)        // Save the json
+	obj.NftJSON = string(data)        // Save the json
 	obj.Key = new(NFT).Init(data).Key // Calculate and save the cid for the json
-	cid2json[obj.Key] = obj.NftJson   // Add cid=json for persisting later
+	cid2json[obj.Key] = obj.NftJSON   // Add cid=json for persisting later
 
 	return data // Return NFT Json
 }
@@ -43,14 +43,14 @@ func (obj *User) MarshalNFT(cid2json map[string]string) []byte {
 func (obj *User) UnmarshalNFT(cid2json map[string]string) {
 	var user User
 	var exists bool
-	var NftJson string
+	var NftJSON string
 
 	// get the json from storage
-	if NftJson, exists = cid2json[obj.Key]; exists {
-		obj.NftJson = NftJson // Set the nft json for the object
+	if NftJSON, exists = cid2json[obj.Key]; exists {
+		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJson), &user)
+	json.Unmarshal([]byte(obj.NftJSON), &user)
 
 	// Deep Copy
 	obj.Email = user.Email

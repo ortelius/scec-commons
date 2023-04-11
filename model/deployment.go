@@ -7,7 +7,7 @@ import (
 
 type Deployment struct {
 	Key         string             `json:"_key,omitempty"`
-	NftJson     string             `json:"_json,omitempty"`
+	NftJSON     string             `json:"_json,omitempty"`
 	Application ApplicationVersion `json:"application"`
 	Components  Components         `json:"components"`
 	DeployNum   int                `json:"deploynum"`
@@ -40,9 +40,9 @@ func (obj *Deployment) MarshalNFT(cid2json map[string]string) []byte {
 		StartTime:   obj.StartTime,
 	})
 
-	obj.NftJson = string(data)
+	obj.NftJSON = string(data)
 	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJson // Add cid=json for persisting later
+	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
 
 	return data
 }
@@ -50,14 +50,14 @@ func (obj *Deployment) MarshalNFT(cid2json map[string]string) []byte {
 func (obj *Deployment) UnmarshalNFT(cid2json map[string]string) {
 	var deployment Deployment
 	var exists bool
-	var NftJson string
+	var NftJSON string
 
 	// get the json from storage
-	if NftJson, exists = cid2json[obj.Key]; exists {
-		obj.NftJson = NftJson // Set the nft json for the object
+	if NftJSON, exists = cid2json[obj.Key]; exists {
+		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJson), &deployment)
+	json.Unmarshal([]byte(obj.NftJSON), &deployment)
 
 	// Deep Copy
 	obj.Application.Key = deployment.Application.Key

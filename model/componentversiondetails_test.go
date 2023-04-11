@@ -141,14 +141,14 @@ func TestComponentVersionDetails(t *testing.T) {
 
 	json.Unmarshal(jsonObj, &compver2nft) // convert json string into the user object
 	compver2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", compver2nft.Key, compver2nft.NftJson)
-	assert.Equal(t, expected, compver2nft.NftJson, "check nft json against expected results")
+	// fmt.Printf("%s=%s\n", compver2nft.Key, compver2nft.NftJSON)
+	assert.Equal(t, expected, compver2nft.NftJSON, "check nft json against expected results")
 
 	var nft2compver ComponentVersionDetails // define user object to marshal into
 
-	nft2compver.NftJson = expected     // set the nft json
+	nft2compver.NftJSON = expected     // set the nft json
 	nft2compver.UnmarshalNFT(cid2json) // convert the json string into the user object
 	nft2compver.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, nft2compver.NftJson, "check unmarshalled user against expected results")
+	assert.Equal(t, expected, nft2compver.NftJSON, "check unmarshalled user against expected results")
 
 }

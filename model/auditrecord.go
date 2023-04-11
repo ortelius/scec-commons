@@ -7,7 +7,7 @@ import (
 
 type AuditRecord struct {
 	Key     string    `json:"_key,omitempty"`
-	NftJson string    `json:"_json,omitempty"`
+	NftJSON string    `json:"_json,omitempty"`
 	Action  string    `json:"action"`
 	User    User      `json:"User"`
 	When    time.Time `json:"when"`
@@ -28,9 +28,9 @@ func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) []byte {
 		When:    obj.When,
 	})
 
-	obj.NftJson = string(data)
+	obj.NftJSON = string(data)
 	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJson // Add cid=json for persisting later
+	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
 
 	return data
 }
@@ -38,14 +38,14 @@ func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) []byte {
 func (obj *AuditRecord) UnmarshalNFT(cid2json map[string]string) {
 	var auditrecord AuditRecord
 	var exists bool
-	var NftJson string
+	var NftJSON string
 
 	// get the json from storage
-	if NftJson, exists = cid2json[obj.Key]; exists {
-		obj.NftJson = NftJson // Set the nft json for the object
+	if NftJSON, exists = cid2json[obj.Key]; exists {
+		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJson), &auditrecord)
+	json.Unmarshal([]byte(obj.NftJSON), &auditrecord)
 
 	// Deep Copy
 	obj.Action = auditrecord.Action
