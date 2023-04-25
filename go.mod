@@ -1,4 +1,4 @@
-module ortelius/scec-commons
+module scec-commons
 
 go 1.20
 
