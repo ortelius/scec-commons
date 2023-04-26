@@ -2,6 +2,11 @@ module github.com/ortelius/scec-commons
 
 go 1.20
 
+retract (
+    v1.0.0 // Published accidentally.
+    v1.0.1 // Contains retractions only.
+)
+
 require (
 	github.com/arangodb/go-driver v1.5.2
 	github.com/ipfs/go-cid v0.4.1
