@@ -5,7 +5,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/arangodb/go-driver"
+	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
 )
 
