@@ -1,4 +1,4 @@
-// Package pkg - AuditRecord defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - AuditRecord defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import (
@@ -49,11 +49,13 @@ func (obj *AuditRecord) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &auditrecord)
+	err := json.Unmarshal([]byte(obj.NftJSON), &auditrecord)
 
-	// Deep Copy
-	obj.Action = auditrecord.Action
-	obj.When = auditrecord.When
-	obj.User.Key = auditrecord.User.Key
-	obj.User.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Action = auditrecord.Action
+		obj.When = auditrecord.When
+		obj.User.Key = auditrecord.User.Key
+		obj.User.UnmarshalNFT(cid2json)
+	}
 }

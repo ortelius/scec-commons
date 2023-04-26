@@ -1,4 +1,4 @@
-// Package pkg - Package defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Package defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -52,13 +52,15 @@ func (obj *Package) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &pkg) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &pkg) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.License = pkg.License
-	obj.LicenseKey = pkg.LicenseKey
-	obj.Name = pkg.Name
-	obj.Purl = pkg.Purl
-	obj.Version = pkg.Version
+	if err == nil {
+		// Deep Copy
+		obj.License = pkg.License
+		obj.LicenseKey = pkg.LicenseKey
+		obj.Name = pkg.Name
+		obj.Purl = pkg.Purl
+		obj.Version = pkg.Version
+	}
 
 }

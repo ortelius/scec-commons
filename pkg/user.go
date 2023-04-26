@@ -1,4 +1,4 @@
-// Package pkg - User defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - User defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import (
@@ -54,13 +54,15 @@ func (obj *User) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &user)
+	err := json.Unmarshal([]byte(obj.NftJSON), &user)
 
-	// Deep Copy
-	obj.Email = user.Email
-	obj.Name = user.Name
-	obj.Phone = user.Phone
-	obj.Realname = user.Realname
-	obj.Domain.Key = user.Domain.Key
-	obj.Domain.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Email = user.Email
+		obj.Name = user.Name
+		obj.Phone = user.Phone
+		obj.Realname = user.Realname
+		obj.Domain.Key = user.Domain.Key
+		obj.Domain.UnmarshalNFT(cid2json)
+	}
 }

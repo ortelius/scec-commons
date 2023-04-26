@@ -1,4 +1,4 @@
-// Package pkg - Deployment defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Deployment defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import (
@@ -61,20 +61,22 @@ func (obj *Deployment) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &deployment)
+	err := json.Unmarshal([]byte(obj.NftJSON), &deployment)
 
-	// Deep Copy
-	obj.Application.Key = deployment.Application.Key
-	obj.Application.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Application.Key = deployment.Application.Key
+		obj.Application.UnmarshalNFT(cid2json)
 
-	obj.Components.Key = deployment.Components.Key
-	obj.Components.UnmarshalNFT(cid2json)
+		obj.Components.Key = deployment.Components.Key
+		obj.Components.UnmarshalNFT(cid2json)
 
-	obj.Environment.Key = deployment.Environment.Key
-	obj.Environment.UnmarshalNFT(cid2json)
+		obj.Environment.Key = deployment.Environment.Key
+		obj.Environment.UnmarshalNFT(cid2json)
 
-	obj.DeployNum = deployment.DeployNum
-	obj.EndTime = deployment.EndTime
-	obj.Result = deployment.Result
-	obj.StartTime = deployment.StartTime
+		obj.DeployNum = deployment.DeployNum
+		obj.EndTime = deployment.EndTime
+		obj.Result = deployment.Result
+		obj.StartTime = deployment.StartTime
+	}
 }

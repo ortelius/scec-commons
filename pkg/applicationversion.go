@@ -1,4 +1,4 @@
-// Package pkg - ApplicationVersion defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - ApplicationVersion defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -52,14 +52,16 @@ func (obj *ApplicationVersion) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &appver) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &appver) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.Domain.Key = appver.Domain.Key
-	obj.Domain.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Domain.Key = appver.Domain.Key
+		obj.Domain.UnmarshalNFT(cid2json)
 
-	obj.Name = appver.Name
-	obj.ParentKey = appver.ParentKey
-	obj.PredecessorKey = appver.PredecessorKey
-	obj.Deployments = append(obj.Deployments, appver.Deployments...)
+		obj.Name = appver.Name
+		obj.ParentKey = appver.ParentKey
+		obj.PredecessorKey = appver.PredecessorKey
+		obj.Deployments = append(obj.Deployments, appver.Deployments...)
+	}
 }

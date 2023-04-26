@@ -1,4 +1,4 @@
-// Package pkg - NFT defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - NFT defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 //lint:file-ignore S1034 Ignore all assignments for switch statements
@@ -17,7 +17,7 @@ type NFT struct {
 // Init is the constructor for the NFT struct.
 // It calculates the CID for the JSON string
 // and saves it as the Key.
-func (obj *NFT) Init(JSON []byte) NFT {
+func (obj *NFT) Init(jsonStr []byte) NFT {
 
 	var pref = cid.Prefix{
 		Version:  1,
@@ -26,7 +26,7 @@ func (obj *NFT) Init(JSON []byte) NFT {
 		MhLength: -1, // default length
 	}
 
-	_cid, err := pref.Sum(JSON)
+	_cid, err := pref.Sum(jsonStr)
 
 	if err != nil {
 		obj.Key = ""

@@ -1,4 +1,4 @@
-// Package pkg - Group defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Group defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -43,10 +43,12 @@ func (obj *Group) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &group) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &group) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.Name = group.Name
-	obj.Domain.Key = group.Domain.Key
-	obj.Domain.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Name = group.Name
+		obj.Domain.Key = group.Domain.Key
+		obj.Domain.UnmarshalNFT(cid2json)
+	}
 }

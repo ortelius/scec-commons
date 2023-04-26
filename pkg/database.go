@@ -1,3 +1,6 @@
+//go:build !auth
+// +build !auth
+
 // Package pkg - Handles all interaction with ArangoDB
 package pkg
 
@@ -36,48 +39,50 @@ func InitializeDB(ctx context.Context) DBConnection {
 		log.Fatalf("Failed to create HTTP connection: %v", err)
 	}
 
-	conn.SetAuthentication(driver.BasicAuthentication("root", "rootpassword"))
+	_, err = conn.SetAuthentication(driver.BasicAuthentication("root", "rootpassword"))
 
-	if client, err = driver.NewClient(driver.ClientConfig{Connection: conn}); err != nil {
-		log.Fatalf("Failed to create Client: %v", err)
-	}
-
-	exists := false
-	dblist, _ := client.Databases(ctx)
-
-	for _, dbinfo := range dblist {
-		if dbinfo.Name() == databaseName {
-			exists = true
-			break
+	if err == nil {
+		if client, err = driver.NewClient(driver.ClientConfig{Connection: conn}); err != nil {
+			log.Fatalf("Failed to create Client: %v", err)
 		}
-	}
 
-	if exists {
-		if db, err = client.Database(ctx, databaseName); err != nil {
-			log.Fatalf("Failed to create Database: %v", err)
-		}
-	} else {
-		if db, err = client.CreateDatabase(ctx, databaseName, nil); err != nil {
-			log.Fatalf("Failed to create Database: %v", err)
-		}
-	}
+		exists := false
+		dblist, _ := client.Databases(ctx)
 
-	exists, _ = db.CollectionExists(ctx, "books")
-	if exists {
-		if col, err = db.Collection(ctx, "books"); err != nil {
-			log.Fatalf("Failed to use collection: %v", err)
+		for _, dbinfo := range dblist {
+			if dbinfo.Name() == databaseName {
+				exists = true
+				break
+			}
 		}
-	} else {
-		if col, err = db.CreateCollection(ctx, "books", nil); err != nil {
-			log.Fatalf("Failed to create collection: %v", err)
+
+		if exists {
+			if db, err = client.Database(ctx, databaseName); err != nil {
+				log.Fatalf("Failed to create Database: %v", err)
+			}
+		} else {
+			if db, err = client.CreateDatabase(ctx, databaseName, nil); err != nil {
+				log.Fatalf("Failed to create Database: %v", err)
+			}
 		}
-	}
 
-	initDone = true
+		exists, _ = db.CollectionExists(ctx, "books")
+		if exists {
+			if col, err = db.Collection(ctx, "books"); err != nil {
+				log.Fatalf("Failed to use collection: %v", err)
+			}
+		} else {
+			if col, err = db.CreateCollection(ctx, "books", nil); err != nil {
+				log.Fatalf("Failed to create collection: %v", err)
+			}
+		}
 
-	dbConnection = DBConnection{
-		Database:   db,
-		Collection: col,
+		initDone = true
+
+		dbConnection = DBConnection{
+			Database:   db,
+			Collection: col,
+		}
 	}
 	return dbConnection
 }

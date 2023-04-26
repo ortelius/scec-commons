@@ -1,4 +1,4 @@
-// Package pkg - Vulnerabilities defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Vulnerabilities defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -43,16 +43,18 @@ func (obj *Vulnerabilities) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &pkgs) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &pkgs) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.Vulnerabilities = make([]Vulnerability, 0)
+	if err == nil {
+		// Deep Copy
+		obj.Vulnerabilities = make([]Vulnerability, 0)
 
-	for _, v := range pkgs.Vulnerabilities {
-		var rec Vulnerability
+		for _, v := range pkgs.Vulnerabilities {
+			var rec Vulnerability
 
-		rec.Key = v.Key
-		rec.UnmarshalNFT(cid2json)
-		obj.Vulnerabilities = append(obj.Vulnerabilities, rec)
+			rec.Key = v.Key
+			rec.UnmarshalNFT(cid2json)
+			obj.Vulnerabilities = append(obj.Vulnerabilities, rec)
+		}
 	}
 }

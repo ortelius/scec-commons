@@ -1,4 +1,4 @@
-// Package pkg - AuditLog defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - AuditLog defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -43,16 +43,18 @@ func (obj *AuditLog) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &auditlog) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &auditlog) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.AuditLog = make([]AuditRecord, 0)
+	if err == nil {
+		// Deep Copy
+		obj.AuditLog = make([]AuditRecord, 0)
 
-	for _, v := range auditlog.AuditLog {
-		var rec AuditRecord
+		for _, v := range auditlog.AuditLog {
+			var rec AuditRecord
 
-		rec.Key = v.Key
-		rec.UnmarshalNFT(cid2json)
-		obj.AuditLog = append(obj.AuditLog, rec)
+			rec.Key = v.Key
+			rec.UnmarshalNFT(cid2json)
+			obj.AuditLog = append(obj.AuditLog, rec)
+		}
 	}
 }

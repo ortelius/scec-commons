@@ -1,4 +1,4 @@
-// Package pkg - ApplicationVersionDetails defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - ApplicationVersionDetails defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import (
@@ -67,28 +67,30 @@ func (obj *ApplicationVersionDetails) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &appver) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &appver) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.AuditLog.Key = appver.AuditLog.Key
-	obj.AuditLog.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.AuditLog.Key = appver.AuditLog.Key
+		obj.AuditLog.UnmarshalNFT(cid2json)
 
-	obj.Components.Key = appver.Components.Key
-	obj.Components.UnmarshalNFT(cid2json)
+		obj.Components.Key = appver.Components.Key
+		obj.Components.UnmarshalNFT(cid2json)
 
-	obj.Created = appver.Created
+		obj.Created = appver.Created
 
-	obj.Creator.Key = appver.Creator.Key
-	obj.Creator.UnmarshalNFT(cid2json)
+		obj.Creator.Key = appver.Creator.Key
+		obj.Creator.UnmarshalNFT(cid2json)
 
-	obj.Domain.Key = appver.Domain.Key
-	obj.Domain.UnmarshalNFT(cid2json)
+		obj.Domain.Key = appver.Domain.Key
+		obj.Domain.UnmarshalNFT(cid2json)
 
-	obj.Name = appver.Name
+		obj.Name = appver.Name
 
-	obj.Owner.Key = appver.Owner.Key
-	obj.Owner.UnmarshalNFT(cid2json)
+		obj.Owner.Key = appver.Owner.Key
+		obj.Owner.UnmarshalNFT(cid2json)
 
-	obj.ParentKey = appver.ParentKey
-	obj.PredecessorKey = appver.PredecessorKey
+		obj.ParentKey = appver.ParentKey
+		obj.PredecessorKey = appver.PredecessorKey
+	}
 }

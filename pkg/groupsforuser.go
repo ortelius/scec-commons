@@ -1,4 +1,4 @@
-// Package pkg - GroupsForUser defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - GroupsForUser defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -43,9 +43,11 @@ func (obj *GroupsForUser) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &groups4user)
+	err := json.Unmarshal([]byte(obj.NftJSON), &groups4user)
 
-	// Deep Copy
-	obj.UserKey = groups4user.UserKey
-	obj.GroupKeys = append(obj.GroupKeys, groups4user.GroupKeys...)
+	if err == nil {
+		// Deep Copy
+		obj.UserKey = groups4user.UserKey
+		obj.GroupKeys = append(obj.GroupKeys, groups4user.GroupKeys...)
+	}
 }

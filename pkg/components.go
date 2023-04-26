@@ -1,4 +1,4 @@
-// Package pkg - Components defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Components defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -43,16 +43,18 @@ func (obj *Components) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &comps) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &comps) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.Components = make([]ComponentVersion, 0)
+	if err == nil {
+		// Deep Copy
+		obj.Components = make([]ComponentVersion, 0)
 
-	for _, v := range comps.Components {
-		var rec ComponentVersion
+		for _, v := range comps.Components {
+			var rec ComponentVersion
 
-		rec.Key = v.Key
-		rec.UnmarshalNFT(cid2json)
-		obj.Components = append(obj.Components, rec)
+			rec.Key = v.Key
+			rec.UnmarshalNFT(cid2json)
+			obj.Components = append(obj.Components, rec)
+		}
 	}
 }

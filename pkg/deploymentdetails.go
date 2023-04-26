@@ -1,4 +1,4 @@
-// Package pkg - DeploymentDetails defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - DeploymentDetails defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -43,11 +43,13 @@ func (obj *DeploymentDetails) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &deploydetails)
+	err := json.Unmarshal([]byte(obj.NftJSON), &deploydetails)
 
-	// Deep Copy
-	obj.Deployment.Key = deploydetails.Deployment.Key
-	obj.Deployment.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Deployment.Key = deploydetails.Deployment.Key
+		obj.Deployment.UnmarshalNFT(cid2json)
 
-	obj.Log = append(obj.Log, deploydetails.Log...)
+		obj.Log = append(obj.Log, deploydetails.Log...)
+	}
 }

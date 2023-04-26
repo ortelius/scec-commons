@@ -1,4 +1,4 @@
-// Package pkg - Swagger defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Swagger defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -40,8 +40,10 @@ func (obj *Swagger) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &swagger) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &swagger) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.Content = append(obj.Content, swagger.Content...)
+	if err == nil {
+		// Deep Copy
+		obj.Content = append(obj.Content, swagger.Content...)
+	}
 }

@@ -1,7 +1,8 @@
+---
 # See https://github.com/golangci/golangci-lint#config-file
 run:
-  issues-exit-code: 1 #Default
-  tests: true #Default
+  issues-exit-code: 1
+  tests: false
 
 linters:
   enable:
@@ -13,9 +14,14 @@ linters:
     - goconst
     - goimports
     - gocritic
+    - typecheck
 
 linters-settings:
   misspell:
     locale: US
     ignore-words:
       - cancelled
+
+max-issues-per-linter: 0
+max-same-issues: 0
+fix: true

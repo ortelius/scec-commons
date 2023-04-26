@@ -1,4 +1,4 @@
-// Package pkg - Consuming defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Consuming defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
@@ -40,8 +40,10 @@ func (obj *Consuming) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &consuming)
+	err := json.Unmarshal([]byte(obj.NftJSON), &consuming)
 
-	// Deep Copy
-	obj.Comsumes = append(obj.Comsumes, consuming.Comsumes...)
+	if err == nil {
+		// Deep Copy
+		obj.Comsumes = append(obj.Comsumes, consuming.Comsumes...)
+	}
 }

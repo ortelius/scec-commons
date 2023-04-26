@@ -1,4 +1,4 @@
-// Package pkg - Environment defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Environment defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import (
@@ -55,15 +55,17 @@ func (obj *Environment) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &environment)
+	err := json.Unmarshal([]byte(obj.NftJSON), &environment)
 
-	// Deep Copy
-	obj.Created = environment.Created
-	obj.Creator.Key = environment.Creator.Key
-	obj.Creator.UnmarshalNFT(cid2json)
-	obj.Domain.Key = environment.Domain.Key
-	obj.Domain.UnmarshalNFT(cid2json)
-	obj.Name = environment.Name
-	obj.Owner.Key = environment.Owner.Key
-	obj.Owner.UnmarshalNFT(cid2json)
+	if err == nil {
+		// Deep Copy
+		obj.Created = environment.Created
+		obj.Creator.Key = environment.Creator.Key
+		obj.Creator.UnmarshalNFT(cid2json)
+		obj.Domain.Key = environment.Domain.Key
+		obj.Domain.UnmarshalNFT(cid2json)
+		obj.Name = environment.Name
+		obj.Owner.Key = environment.Owner.Key
+		obj.Owner.UnmarshalNFT(cid2json)
+	}
 }

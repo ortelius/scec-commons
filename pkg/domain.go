@@ -1,9 +1,9 @@
-// Package pkg - Domain defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
+// Package pkg - Domain defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
 package pkg
 
 import "encoding/json"
 
-// Domain defines a dotted domain heirarchy
+// Domain defines a dotted domain hierarchy
 type Domain struct {
 	Key     string `json:"_key,omitempty"`
 	NftJSON string `json:"_json,omitempty"`
@@ -40,8 +40,10 @@ func (obj *Domain) UnmarshalNFT(cid2json map[string]string) {
 		obj.NftJSON = NftJSON // Set the nft json for the object
 	}
 
-	json.Unmarshal([]byte(obj.NftJSON), &domain) // Convert the nft json into the domain object
+	err := json.Unmarshal([]byte(obj.NftJSON), &domain) // Convert the nft json into the domain object
 
-	// Deep Copy
-	obj.Name = domain.Name
+	if err == nil {
+		// Deep Copy
+		obj.Name = domain.Name
+	}
 }
