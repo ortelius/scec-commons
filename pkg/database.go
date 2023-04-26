@@ -1,12 +1,13 @@
 //go:build !auth
 // +build !auth
 
-// Package pkg - Handles all interaction with ArangoDB
-package pkg
+// Package ortelius - Handles all interaction with ArangoDB
+package ortelius
 
 import (
 	"context"
 	"log"
+	"os"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
@@ -20,6 +21,14 @@ type DBConnection struct {
 
 var initDone = false
 var dbConnection DBConnection
+
+func getEnvDefault(key, defVal string) string {
+	val, ex := os.LookupEnv(key)
+	if !ex {
+		return defVal
+	}
+	return val
+}
 
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
 func InitializeDB(ctx context.Context) DBConnection {
@@ -35,7 +44,9 @@ func InitializeDB(ctx context.Context) DBConnection {
 		return dbConnection
 	}
 
-	if conn, err = http.NewConnection(http.ConnectionConfig{Endpoints: []string{"http://192.168.10.120:8529"}}); err != nil {
+	dburl := getEnvDefault("ARGANGO_URL", "http://localhost:8529")
+
+	if conn, err = http.NewConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
 		log.Fatalf("Failed to create HTTP connection: %v", err)
 	}
 

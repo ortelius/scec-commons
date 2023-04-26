@@ -1,5 +1,5 @@
-// Package pkg - NFT defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
-package pkg
+// Package ortelius - NFT defines the struct and handles marshaling/unmarshaling the struct to/from NFT Storage.
+package ortelius
 
 //lint:file-ignore S1034 Ignore all assignments for switch statements
 

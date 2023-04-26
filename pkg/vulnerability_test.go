@@ -1,4 +1,4 @@
-package pkg
+package ortelius
 
 import (
 	"encoding/json"
