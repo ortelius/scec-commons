@@ -3,8 +3,10 @@ module github.com/ortelius/scec-commons
 go 1.20
 
 retract (
-    v1.0.0 // Published accidentally.
-    v1.0.1 // Contains retractions only.
+    v1.0.0
+    v1.0.1
+	v1.0.2
+	v1.0.3
 )
 
 require (
