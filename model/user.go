@@ -1,9 +1,11 @@
+// Package model - User defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import (
 	"encoding/json"
 )
 
+// User defines a user
 type User struct {
 	Key      string `json:"_key,omitempty"`
 	NftJSON  string `json:"_json,omitempty"`
@@ -14,6 +16,7 @@ type User struct {
 	Realname string `json:"realname,omitempty"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *User) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -40,6 +43,7 @@ func (obj *User) MarshalNFT(cid2json map[string]string) []byte {
 	return data // Return NFT Json
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *User) UnmarshalNFT(cid2json map[string]string) {
 	var user User
 	var exists bool

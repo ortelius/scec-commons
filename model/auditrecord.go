@@ -1,3 +1,4 @@
+// Package model - AuditRecord defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import (
@@ -5,6 +6,7 @@ import (
 	"time"
 )
 
+// AuditRecord defines a single audit event
 type AuditRecord struct {
 	Key     string    `json:"_key,omitempty"`
 	NftJSON string    `json:"_json,omitempty"`
@@ -13,6 +15,7 @@ type AuditRecord struct {
 	When    time.Time `json:"when"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -35,6 +38,7 @@ func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *AuditRecord) UnmarshalNFT(cid2json map[string]string) {
 	var auditrecord AuditRecord
 	var exists bool

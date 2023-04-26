@@ -1,7 +1,9 @@
+// Package model - DeploymentDetails defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import "encoding/json"
 
+// DeploymentDetails defines a deployment plus the associated log
 type DeploymentDetails struct {
 	Key        string     `json:"_key,omitempty"`
 	NftJSON    string     `json:"_json,omitempty"`
@@ -9,6 +11,7 @@ type DeploymentDetails struct {
 	Log        []string   `json:"log,omitempty"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *DeploymentDetails) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -29,6 +32,7 @@ func (obj *DeploymentDetails) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *DeploymentDetails) UnmarshalNFT(cid2json map[string]string) {
 	var deploydetails DeploymentDetails
 	var exists bool

@@ -1,3 +1,4 @@
+// Package model - Deployment defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import (
@@ -5,6 +6,7 @@ import (
 	"time"
 )
 
+// Deployment defines a deployment for a List View
 type Deployment struct {
 	Key         string             `json:"_key,omitempty"`
 	NftJSON     string             `json:"_json,omitempty"`
@@ -17,6 +19,7 @@ type Deployment struct {
 	StartTime   time.Time          `json:"starttime"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *Deployment) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -47,6 +50,7 @@ func (obj *Deployment) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *Deployment) UnmarshalNFT(cid2json map[string]string) {
 	var deployment Deployment
 	var exists bool

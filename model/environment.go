@@ -1,3 +1,4 @@
+// Package model - Environment defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import (
@@ -5,6 +6,7 @@ import (
 	"time"
 )
 
+// Environment defines a logical location that the deployment was perform against
 type Environment struct {
 	Key     string    `json:"_key,omitempty"`
 	NftJSON string    `json:"_json,omitempty"`
@@ -15,6 +17,7 @@ type Environment struct {
 	Owner   User      `json:"owner"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *Environment) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -41,6 +44,7 @@ func (obj *Environment) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *Environment) UnmarshalNFT(cid2json map[string]string) {
 	var environment Environment
 	var exists bool

@@ -1,7 +1,9 @@
+// Package model - GroupsForUser defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import "encoding/json"
 
+// GroupsForUser defines a user to a group
 type GroupsForUser struct {
 	Key       string   `json:"_key,omitempty"`
 	NftJSON   string   `json:"_json,omitempty"`
@@ -9,6 +11,7 @@ type GroupsForUser struct {
 	UserKey   string   `json:"user"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *GroupsForUser) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -29,6 +32,7 @@ func (obj *GroupsForUser) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *GroupsForUser) UnmarshalNFT(cid2json map[string]string) {
 	var groups4user GroupsForUser
 	var exists bool

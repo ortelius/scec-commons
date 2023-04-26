@@ -1,12 +1,14 @@
+// Package model - CompAttrs defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import "encoding/json"
 
+// CompAttrs defines the well known attributes for a Component
 type CompAttrs struct {
 	Key                  string `json:"_key,omitempty"`
 	NftJSON              string `json:"_json,omitempty"`
 	BuildDate            string `json:"builddate,omitempty"`
-	BuildId              string `json:"buildid,omitempty"`
+	BuildID              string `json:"buildid,omitempty"`
 	BuildURL             string `json:"buildurl,omitempty"`
 	Chart                string `json:"chart,omitempty"`
 	ChartNamespace       string `json:"chartnamespace,omitempty"`
@@ -29,12 +31,13 @@ type CompAttrs struct {
 	SlackChannel         string `json:"slackchannel,omitempty"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *CompAttrs) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
 		BuildDate            string `json:"builddate,omitempty"`
-		BuildId              string `json:"buildid,omitempty"`
+		BuildID              string `json:"buildid,omitempty"`
 		BuildURL             string `json:"buildurl,omitempty"`
 		Chart                string `json:"chart,omitempty"`
 		ChartNamespace       string `json:"chartnamespace,omitempty"`
@@ -58,7 +61,7 @@ func (obj *CompAttrs) MarshalNFT(cid2json map[string]string) []byte {
 		SlackChannel         string `json:"slackchannel,omitempty"`
 	}{
 		BuildDate:            obj.BuildDate,
-		BuildId:              obj.BuildId,
+		BuildID:              obj.BuildID,
 		BuildURL:             obj.BuildURL,
 		Chart:                obj.Chart,
 		ChartNamespace:       obj.ChartNamespace,
@@ -89,6 +92,7 @@ func (obj *CompAttrs) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *CompAttrs) UnmarshalNFT(cid2json map[string]string) {
 	var compattrs CompAttrs
 	var exists bool
@@ -103,7 +107,7 @@ func (obj *CompAttrs) UnmarshalNFT(cid2json map[string]string) {
 
 	// Deep Copy
 	obj.BuildDate = compattrs.BuildDate
-	obj.BuildId = compattrs.BuildId
+	obj.BuildID = compattrs.BuildID
 	obj.BuildURL = compattrs.BuildURL
 	obj.Chart = compattrs.Chart
 	obj.ChartNamespace = compattrs.ChartNamespace

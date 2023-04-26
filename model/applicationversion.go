@@ -1,7 +1,9 @@
+// Package model - ApplicationVersion defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 import "encoding/json"
 
+// ApplicationVersion defines a Version of an Application for a List View
 type ApplicationVersion struct {
 	Key            string `json:"_key,omitempty"`
 	NftJSON        string `json:"_json,omitempty"`
@@ -12,6 +14,7 @@ type ApplicationVersion struct {
 	PredecessorKey string `json:"predecessor_key,omitempty"`
 }
 
+// MarshalNFT converts the struct into a normalized JSON NFT
 func (obj *ApplicationVersion) MarshalNFT(cid2json map[string]string) []byte {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
@@ -38,6 +41,7 @@ func (obj *ApplicationVersion) MarshalNFT(cid2json map[string]string) []byte {
 	return data
 }
 
+// UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *ApplicationVersion) UnmarshalNFT(cid2json map[string]string) {
 	var appver ApplicationVersion // define domain object to marshal into
 	var exists bool

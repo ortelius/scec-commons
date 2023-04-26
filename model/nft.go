@@ -1,3 +1,4 @@
+// Package model - NFT defines the struct and handles marshalling/unmarshalling the struct to/from NFT Storage.
 package model
 
 //lint:file-ignore S1034 Ignore all assignments for switch statements
@@ -8,11 +9,15 @@ import (
 	mh "github.com/multiformats/go-multihash"
 )
 
+// NFT defines the CID key for a JSON string
 type NFT struct {
 	Key string `json:"_key,omitempty"`
 }
 
-func (obj *NFT) Init(Json []byte) NFT {
+// Init is the constructor for the NFT struct.
+// It calculates the CID for the JSON string
+// and saves it as the Key.
+func (obj *NFT) Init(JSON []byte) NFT {
 
 	var pref = cid.Prefix{
 		Version:  1,
@@ -21,7 +26,7 @@ func (obj *NFT) Init(Json []byte) NFT {
 		MhLength: -1, // default length
 	}
 
-	_cid, err := pref.Sum(Json)
+	_cid, err := pref.Sum(JSON)
 
 	if err != nil {
 		obj.Key = ""

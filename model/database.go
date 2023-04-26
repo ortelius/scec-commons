@@ -1,4 +1,5 @@
-package database
+// Package model - Handles all interaction with ArangoDB
+package model
 
 import (
 	"context"
