@@ -3,6 +3,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -14,6 +15,7 @@ import (
 type DBConnection struct {
 	Collection driver.Collection
 	Database   driver.Database
+	Context    context.Context
 }
 
 var initDone = false
@@ -28,7 +30,7 @@ func getEnvDefault(key, defVal string) string {
 }
 
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
-func InitializeDB(ctx context.Context) DBConnection {
+func InitializeDB() DBConnection {
 
 	var db driver.Database
 	var col driver.Collection
@@ -36,6 +38,8 @@ func InitializeDB(ctx context.Context) DBConnection {
 	var client driver.Client
 	var err error
 	const databaseName = "examples_books"
+
+	ctx := context.Background()
 
 	if initDone {
 		return dbConnection
@@ -90,7 +94,26 @@ func InitializeDB(ctx context.Context) DBConnection {
 		dbConnection = DBConnection{
 			Database:   db,
 			Collection: col,
+			Context:    ctx,
 		}
 	}
 	return dbConnection
+}
+
+// PersistOnLTS interacts with the db abstraction microservice to
+// store the cid/json data on NFT Storage or the OCI registry
+func PersistOnLTS(cid2json map[string]string) {
+
+	fmt.Printf("%+v\n", cid2json)
+}
+
+// FetchFromLTS interacts with the db abstraction microservice to
+// fetch the json from NFT Storage or OCI registry
+func FetchFromLTS(key string) (string, map[string]string) {
+
+	msg := `{"objtype":"Domain","name":"GLOBAL"}`
+
+	cid2json := make(map[string]string, 1)
+	cid2json[key] = msg
+	return key, cid2json
 }

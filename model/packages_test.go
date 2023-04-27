@@ -35,16 +35,16 @@ func TestPackages(t *testing.T) {
 
 	var pkgs2nft Packages // define user object to marshal into
 
-	json.Unmarshal(jsonObj, &pkgs2nft) // convert json string into the user object
-	pkgs2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
+	json.Unmarshal(jsonObj, &pkgs2nft)       // convert json string into the user object
+	nftJSON := pkgs2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
 	// fmt.Printf("%s=%s\n", pkgs2nft.Key, pkgs2nft.NftJSON)
-	assert.Equal(t, expected, pkgs2nft.NftJSON, "check nft json against expected results")
+	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
 
 	var nft2pkgs Packages // define user object to marshal into
 
-	nft2pkgs.NftJSON = expected     // set the nft json
-	nft2pkgs.UnmarshalNFT(cid2json) // convert the json string into the user object
-	nft2pkgs.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, nft2pkgs.NftJSON, "check unmarshalled user against expected results")
+	nft2pkgs.Key = pkgs2nft.Key            // set the nft json
+	nft2pkgs.UnmarshalNFT(cid2json)        // convert the json string into the user object
+	check := nft2pkgs.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
+	assert.Equal(t, expected, check, "check unmarshalled user against expected results")
 
 }

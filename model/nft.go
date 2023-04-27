@@ -17,7 +17,7 @@ type NFT struct {
 // Init is the constructor for the NFT struct.
 // It calculates the CID for the JSON string
 // and saves it as the Key.
-func (obj *NFT) Init(jsonStr []byte) NFT {
+func (obj *NFT) Init(jsonStr string) NFT {
 
 	var pref = cid.Prefix{
 		Version:  1,
@@ -26,7 +26,7 @@ func (obj *NFT) Init(jsonStr []byte) NFT {
 		MhLength: -1, // default length
 	}
 
-	_cid, err := pref.Sum(jsonStr)
+	_cid, err := pref.Sum([]byte(jsonStr))
 
 	if err != nil {
 		obj.Key = ""

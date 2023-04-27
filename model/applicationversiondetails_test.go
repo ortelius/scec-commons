@@ -79,14 +79,14 @@ func TestApplicationVersionDetails(t *testing.T) {
 
 	json.Unmarshal(jsonObj, &appver2nft) // convert json string into the user object
 	// fmt.Printf("%+v\n\n", appver2nft)
-	appver2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	assert.Equal(t, appver2nft.NftJSON, expected, "check nft json against expected results")
+	nftJSON := appver2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
+	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
 
 	var nft2appver ApplicationVersionDetails // define user object to marshal into
 
-	nft2appver.NftJSON = expected     // set the nft json
-	nft2appver.UnmarshalNFT(cid2json) // convert the json string into the user object
-	nft2appver.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, nft2appver.NftJSON, expected, "check unmarshalled user against expected results")
+	nft2appver.Key = appver2nft.Key          // set the nft json
+	nft2appver.UnmarshalNFT(cid2json)        // convert the json string into the user object
+	check := nft2appver.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
+	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
 
 }

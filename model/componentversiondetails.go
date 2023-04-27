@@ -9,7 +9,6 @@ import (
 // ComponentVersionDetails defines a Version of a Component including fine grained details
 type ComponentVersionDetails struct {
 	Key             string          `json:"_key,omitempty"`
-	NftJSON         string          `json:"_json,omitempty"`
 	Applications    Applications    `json:"applications,omitempty"`
 	Attrs           CompAttrs       `json:"attrs,omitempty"`
 	AuditLog        AuditLog        `json:"autditlog,omitempty"`
@@ -31,7 +30,7 @@ type ComponentVersionDetails struct {
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *ComponentVersionDetails) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *ComponentVersionDetails) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -76,74 +75,72 @@ func (obj *ComponentVersionDetails) MarshalNFT(cid2json map[string]string) []byt
 		Vulnerabilities: new(NFT).Init(obj.Vulnerabilities.MarshalNFT(cid2json)),
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *ComponentVersionDetails) UnmarshalNFT(cid2json map[string]string) {
 	var compver ComponentVersionDetails // define domain object to marshal into
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &compver) // Convert the nft json into the domain object
+		err := json.Unmarshal([]byte(nftJSON), &compver) // Convert the nft json into the domain object
 
-	if err == nil {
-		// Deep Copy
-		//	obj.Applications.Key = compver.Applications.Key
-		//	obj.Applications.UnmarshalNFT(cid2json)
+		if err == nil {
+			// Deep Copy
+			//	obj.Applications.Key = compver.Applications.Key
+			//	obj.Applications.UnmarshalNFT(cid2json)
 
-		obj.Attrs.Key = compver.Attrs.Key
-		obj.Attrs.UnmarshalNFT(cid2json)
+			obj.Attrs.Key = compver.Attrs.Key
+			obj.Attrs.UnmarshalNFT(cid2json)
 
-		obj.AuditLog.Key = compver.AuditLog.Key
-		obj.AuditLog.UnmarshalNFT(cid2json)
+			obj.AuditLog.Key = compver.AuditLog.Key
+			obj.AuditLog.UnmarshalNFT(cid2json)
 
-		obj.CompType = compver.CompType
+			obj.CompType = compver.CompType
 
-		obj.Consuming.Key = compver.Consuming.Key
-		obj.Consuming.UnmarshalNFT(cid2json)
+			obj.Consuming.Key = compver.Consuming.Key
+			obj.Consuming.UnmarshalNFT(cid2json)
 
-		obj.Created = compver.Created
+			obj.Created = compver.Created
 
-		obj.Creator.Key = compver.Creator.Key
-		obj.Creator.UnmarshalNFT(cid2json)
+			obj.Creator.Key = compver.Creator.Key
+			obj.Creator.UnmarshalNFT(cid2json)
 
-		obj.Domain.Key = compver.Domain.Key
-		obj.Domain.UnmarshalNFT(cid2json)
+			obj.Domain.Key = compver.Domain.Key
+			obj.Domain.UnmarshalNFT(cid2json)
 
-		obj.License.Key = compver.License.Key
-		obj.License.UnmarshalNFT(cid2json)
+			obj.License.Key = compver.License.Key
+			obj.License.UnmarshalNFT(cid2json)
 
-		obj.Name = compver.Name
+			obj.Name = compver.Name
 
-		obj.Owner.Key = compver.Owner.Key
-		obj.Owner.UnmarshalNFT(cid2json)
+			obj.Owner.Key = compver.Owner.Key
+			obj.Owner.UnmarshalNFT(cid2json)
 
-		obj.Packages.Key = compver.Packages.Key
-		obj.Packages.UnmarshalNFT(cid2json)
+			obj.Packages.Key = compver.Packages.Key
+			obj.Packages.UnmarshalNFT(cid2json)
 
-		obj.ParentKey = compver.ParentKey
-		obj.PredecessorKey = compver.PredecessorKey
+			obj.ParentKey = compver.ParentKey
+			obj.PredecessorKey = compver.PredecessorKey
 
-		obj.Providing.Key = compver.Providing.Key
-		obj.Providing.UnmarshalNFT(cid2json)
+			obj.Providing.Key = compver.Providing.Key
+			obj.Providing.UnmarshalNFT(cid2json)
 
-		obj.Readme.Key = compver.Readme.Key
-		obj.Readme.UnmarshalNFT(cid2json)
+			obj.Readme.Key = compver.Readme.Key
+			obj.Readme.UnmarshalNFT(cid2json)
 
-		obj.Swagger.Key = compver.Swagger.Key
-		obj.Swagger.UnmarshalNFT(cid2json)
+			obj.Swagger.Key = compver.Swagger.Key
+			obj.Swagger.UnmarshalNFT(cid2json)
 
-		obj.Vulnerabilities.Key = compver.Vulnerabilities.Key
-		obj.Vulnerabilities.UnmarshalNFT(cid2json)
+			obj.Vulnerabilities.Key = compver.Vulnerabilities.Key
+			obj.Vulnerabilities.UnmarshalNFT(cid2json)
+		}
 	}
 }

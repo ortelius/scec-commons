@@ -49,16 +49,16 @@ func TestCompAttrs(t *testing.T) {
 
 	var compattrs2nft CompAttrs // define user object to marshal into
 
-	json.Unmarshal(jsonObj, &compattrs2nft) // convert json string into the user object
-	compattrs2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
+	json.Unmarshal(jsonObj, &compattrs2nft)       // convert json string into the user object
+	nftJSON := compattrs2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
 	// fmt.Printf("%s=%s\n", compattrs2nft.Key, compattrs2nft.NftJSON)
-	assert.Equal(t, compattrs2nft.NftJSON, expected, "check nft json against expected results")
+	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
 
 	var nft2compattrs CompAttrs // define user object to marshal into
 
-	nft2compattrs.NftJSON = expected     // set the nft json
-	nft2compattrs.UnmarshalNFT(cid2json) // convert the json string into the user object
-	nft2compattrs.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, nft2compattrs.NftJSON, expected, "check unmarshalled user against expected results")
+	nft2compattrs.Key = compattrs2nft.Key       // set the nft json
+	nft2compattrs.UnmarshalNFT(cid2json)        // convert the json string into the user object
+	check := nft2compattrs.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
+	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
 
 }

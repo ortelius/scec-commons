@@ -6,12 +6,11 @@ import "encoding/json"
 // AuditLog defines a list of Audit Records
 type AuditLog struct {
 	Key      string        `json:"_key,omitempty"`
-	NftJSON  string        `json:"_json,omitempty"`
 	AuditLog []AuditRecord `json:"auditlog,omitempty"`
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *AuditLog) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *AuditLog) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	type AuditLogNFT struct {
@@ -25,36 +24,35 @@ func (obj *AuditLog) MarshalNFT(cid2json map[string]string) []byte {
 	}
 
 	data, _ := json.Marshal(reclist)
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
 
-	return data
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
+
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *AuditLog) UnmarshalNFT(cid2json map[string]string) {
 	var auditlog AuditLog // define domain object to marshal into
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &auditlog) // Convert the nft json into the domain object
+		err := json.Unmarshal([]byte(nftJSON), &auditlog) // Convert the nft json into the domain object
 
-	if err == nil {
-		// Deep Copy
-		obj.AuditLog = make([]AuditRecord, 0)
+		if err == nil {
+			// Deep Copy
+			obj.AuditLog = make([]AuditRecord, 0)
 
-		for _, v := range auditlog.AuditLog {
-			var rec AuditRecord
+			for _, v := range auditlog.AuditLog {
+				var rec AuditRecord
 
-			rec.Key = v.Key
-			rec.UnmarshalNFT(cid2json)
-			obj.AuditLog = append(obj.AuditLog, rec)
+				rec.Key = v.Key
+				rec.UnmarshalNFT(cid2json)
+				obj.AuditLog = append(obj.AuditLog, rec)
+			}
 		}
 	}
 }

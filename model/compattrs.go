@@ -6,7 +6,6 @@ import "encoding/json"
 // CompAttrs defines the well known attributes for a Component
 type CompAttrs struct {
 	Key                  string `json:"_key,omitempty"`
-	NftJSON              string `json:"_json,omitempty"`
 	BuildDate            string `json:"builddate,omitempty"`
 	BuildID              string `json:"buildid,omitempty"`
 	BuildURL             string `json:"buildurl,omitempty"`
@@ -32,7 +31,7 @@ type CompAttrs struct {
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *CompAttrs) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *CompAttrs) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -85,50 +84,48 @@ func (obj *CompAttrs) MarshalNFT(cid2json map[string]string) []byte {
 		SlackChannel:         obj.SlackChannel,
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *CompAttrs) UnmarshalNFT(cid2json map[string]string) {
 	var compattrs CompAttrs
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &compattrs)
+		err := json.Unmarshal([]byte(nftJSON), &compattrs)
 
-	if err == nil {
-		// Deep Copy
-		obj.BuildDate = compattrs.BuildDate
-		obj.BuildID = compattrs.BuildID
-		obj.BuildURL = compattrs.BuildURL
-		obj.Chart = compattrs.Chart
-		obj.ChartNamespace = compattrs.ChartNamespace
-		obj.ChartRepo = compattrs.ChartRepo
-		obj.ChartRepoURL = compattrs.ChartRepoURL
-		obj.ChartVersion = compattrs.ChartVersion
-		obj.DiscordChannel = compattrs.DiscordChannel
-		obj.DockerRepo = compattrs.DockerRepo
-		obj.DockerSha = compattrs.DockerSha
-		obj.DockerTag = compattrs.DockerTag
-		obj.GitCommit = compattrs.GitCommit
-		obj.GitRepo = compattrs.GitRepo
-		obj.GitTag = compattrs.GitTag
-		obj.GitURL = compattrs.GitURL
-		obj.HipchatChannel = compattrs.HipchatChannel
-		obj.PagerdutyBusinessURL = compattrs.PagerdutyBusinessURL
-		obj.PagerdutyURL = compattrs.PagerdutyURL
-		obj.Repository = compattrs.Repository
-		obj.ServiceOwner.Key = compattrs.ServiceOwner.Key
-		obj.ServiceOwner.UnmarshalNFT(cid2json)
-		obj.SlackChannel = compattrs.SlackChannel
+		if err == nil {
+			// Deep Copy
+			obj.BuildDate = compattrs.BuildDate
+			obj.BuildID = compattrs.BuildID
+			obj.BuildURL = compattrs.BuildURL
+			obj.Chart = compattrs.Chart
+			obj.ChartNamespace = compattrs.ChartNamespace
+			obj.ChartRepo = compattrs.ChartRepo
+			obj.ChartRepoURL = compattrs.ChartRepoURL
+			obj.ChartVersion = compattrs.ChartVersion
+			obj.DiscordChannel = compattrs.DiscordChannel
+			obj.DockerRepo = compattrs.DockerRepo
+			obj.DockerSha = compattrs.DockerSha
+			obj.DockerTag = compattrs.DockerTag
+			obj.GitCommit = compattrs.GitCommit
+			obj.GitRepo = compattrs.GitRepo
+			obj.GitTag = compattrs.GitTag
+			obj.GitURL = compattrs.GitURL
+			obj.HipchatChannel = compattrs.HipchatChannel
+			obj.PagerdutyBusinessURL = compattrs.PagerdutyBusinessURL
+			obj.PagerdutyURL = compattrs.PagerdutyURL
+			obj.Repository = compattrs.Repository
+			obj.ServiceOwner.Key = compattrs.ServiceOwner.Key
+			obj.ServiceOwner.UnmarshalNFT(cid2json)
+			obj.SlackChannel = compattrs.SlackChannel
+		}
 	}
 }

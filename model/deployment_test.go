@@ -82,16 +82,16 @@ func TestDeployment(t *testing.T) {
 
 	var deployment2nft Deployment // define user object to marshal into
 
-	json.Unmarshal(jsonObj, &deployment2nft) // convert json string into the user object
-	deployment2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
+	json.Unmarshal(jsonObj, &deployment2nft)       // convert json string into the user object
+	nftJSON := deployment2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
 	// fmt.Printf("%s=%s\n", deployment2nft.Key, deployment2nft.NftJSON)
-	assert.Equal(t, expected, deployment2nft.NftJSON, "check nft json against expected results")
+	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
 
 	var nft2deployment Deployment // define user object to marshal into
 
-	nft2deployment.NftJSON = expected     // set the nft json
-	nft2deployment.UnmarshalNFT(cid2json) // convert the json string into the user object
-	nft2deployment.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, nft2deployment.NftJSON, "check unmarshalled against expected results")
+	nft2deployment.Key = deployment2nft.Key      // set the nft json
+	nft2deployment.UnmarshalNFT(cid2json)        // convert the json string into the user object
+	check := nft2deployment.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
+	assert.Equal(t, expected, check, "check unmarshalled against expected results")
 
 }

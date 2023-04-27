@@ -9,7 +9,6 @@ import (
 // Environment defines a logical location that the deployment was perform against
 type Environment struct {
 	Key     string    `json:"_key,omitempty"`
-	NftJSON string    `json:"_json,omitempty"`
 	Created time.Time `json:"created"`
 	Creator User      `json:"creator"`
 	Domain  Domain    `json:"domain"`
@@ -18,7 +17,7 @@ type Environment struct {
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *Environment) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *Environment) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -37,35 +36,33 @@ func (obj *Environment) MarshalNFT(cid2json map[string]string) []byte {
 		Owner:   new(NFT).Init(obj.Owner.MarshalNFT(cid2json)),
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *Environment) UnmarshalNFT(cid2json map[string]string) {
 	var environment Environment
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &environment)
+		err := json.Unmarshal([]byte(nftJSON), &environment)
 
-	if err == nil {
-		// Deep Copy
-		obj.Created = environment.Created
-		obj.Creator.Key = environment.Creator.Key
-		obj.Creator.UnmarshalNFT(cid2json)
-		obj.Domain.Key = environment.Domain.Key
-		obj.Domain.UnmarshalNFT(cid2json)
-		obj.Name = environment.Name
-		obj.Owner.Key = environment.Owner.Key
-		obj.Owner.UnmarshalNFT(cid2json)
+		if err == nil {
+			// Deep Copy
+			obj.Created = environment.Created
+			obj.Creator.Key = environment.Creator.Key
+			obj.Creator.UnmarshalNFT(cid2json)
+			obj.Domain.Key = environment.Domain.Key
+			obj.Domain.UnmarshalNFT(cid2json)
+			obj.Name = environment.Name
+			obj.Owner.Key = environment.Owner.Key
+			obj.Owner.UnmarshalNFT(cid2json)
+		}
 	}
 }

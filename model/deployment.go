@@ -9,7 +9,6 @@ import (
 // Deployment defines a deployment for a List View
 type Deployment struct {
 	Key         string             `json:"_key,omitempty"`
-	NftJSON     string             `json:"_json,omitempty"`
 	Application ApplicationVersion `json:"application"`
 	Components  Components         `json:"components"`
 	DeployNum   int                `json:"deploynum"`
@@ -20,7 +19,7 @@ type Deployment struct {
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *Deployment) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *Deployment) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -43,40 +42,38 @@ func (obj *Deployment) MarshalNFT(cid2json map[string]string) []byte {
 		StartTime:   obj.StartTime,
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *Deployment) UnmarshalNFT(cid2json map[string]string) {
 	var deployment Deployment
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &deployment)
+		err := json.Unmarshal([]byte(nftJSON), &deployment)
 
-	if err == nil {
-		// Deep Copy
-		obj.Application.Key = deployment.Application.Key
-		obj.Application.UnmarshalNFT(cid2json)
+		if err == nil {
+			// Deep Copy
+			obj.Application.Key = deployment.Application.Key
+			obj.Application.UnmarshalNFT(cid2json)
 
-		obj.Components.Key = deployment.Components.Key
-		obj.Components.UnmarshalNFT(cid2json)
+			obj.Components.Key = deployment.Components.Key
+			obj.Components.UnmarshalNFT(cid2json)
 
-		obj.Environment.Key = deployment.Environment.Key
-		obj.Environment.UnmarshalNFT(cid2json)
+			obj.Environment.Key = deployment.Environment.Key
+			obj.Environment.UnmarshalNFT(cid2json)
 
-		obj.DeployNum = deployment.DeployNum
-		obj.EndTime = deployment.EndTime
-		obj.Result = deployment.Result
-		obj.StartTime = deployment.StartTime
+			obj.DeployNum = deployment.DeployNum
+			obj.EndTime = deployment.EndTime
+			obj.Result = deployment.Result
+			obj.StartTime = deployment.StartTime
+		}
 	}
 }

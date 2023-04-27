@@ -31,16 +31,16 @@ func TestAuditRecord(t *testing.T) {
 
 	var audit2nft AuditRecord // define user object to marshal into
 
-	json.Unmarshal(jsonObj, &audit2nft) // convert json string into the user object
-	audit2nft.MarshalNFT(cid2json)      // generate the cid and nft json for user object
+	json.Unmarshal(jsonObj, &audit2nft)       // convert json string into the user object
+	nftJSON := audit2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
 	// fmt.Printf("%s=%s\n", audit2nft.Key, audit2nft.NftJSON)
-	assert.Equal(t, audit2nft.NftJSON, expected, "check nft json against expected results")
+	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
 
 	var nft2audit AuditRecord // define user object to marshal into
 
-	nft2audit.NftJSON = expected     // set the nft json
-	nft2audit.UnmarshalNFT(cid2json) // convert the json string into the user object
-	nft2audit.MarshalNFT(cid2json)   // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, nft2audit.NftJSON, expected, "check unmarshalled user against expected results")
+	nft2audit.Key = audit2nft.Key           // set the nft json
+	nft2audit.UnmarshalNFT(cid2json)        // convert the json string into the user object
+	check := nft2audit.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
+	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
 
 }

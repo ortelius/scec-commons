@@ -6,13 +6,12 @@ import "encoding/json"
 // UsersForGroup defines a list of user that belong to the group
 type UsersForGroup struct {
 	Key      string   `json:"_key,omitempty"`
-	NftJSON  string   `json:"_json,omitempty"`
 	GroupKey string   `json:"group"`
 	UserKeys []string `json:"users"`
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *UsersForGroup) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *UsersForGroup) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -25,29 +24,27 @@ func (obj *UsersForGroup) MarshalNFT(cid2json map[string]string) []byte {
 		UserKeys: obj.UserKeys,
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *UsersForGroup) UnmarshalNFT(cid2json map[string]string) {
 	var users4group UsersForGroup
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &users4group)
+		err := json.Unmarshal([]byte(nftJSON), &users4group)
 
-	if err == nil {
-		// Deep Copy
-		obj.GroupKey = users4group.GroupKey
-		obj.UserKeys = append(obj.UserKeys, users4group.UserKeys...)
+		if err == nil {
+			// Deep Copy
+			obj.GroupKey = users4group.GroupKey
+			obj.UserKeys = append(obj.UserKeys, users4group.UserKeys...)
+		}
 	}
 }

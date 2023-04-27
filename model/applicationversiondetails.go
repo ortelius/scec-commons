@@ -9,7 +9,6 @@ import (
 // ApplicationVersionDetails defines a Version of an Application including fine grained details
 type ApplicationVersionDetails struct {
 	Key            string     `json:"_key,omitempty"`
-	NftJSON        string     `json:"_json,omitempty"`
 	AuditLog       AuditLog   `json:"auditlog,omitempty"`
 	Components     Components `json:"components,omitempty"`
 	Created        time.Time  `json:"created"`
@@ -22,7 +21,7 @@ type ApplicationVersionDetails struct {
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *ApplicationVersionDetails) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *ApplicationVersionDetails) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -49,48 +48,46 @@ func (obj *ApplicationVersionDetails) MarshalNFT(cid2json map[string]string) []b
 		PredecessorKey: obj.PredecessorKey,
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *ApplicationVersionDetails) UnmarshalNFT(cid2json map[string]string) {
 	var appver ApplicationVersionDetails // define domain object to marshal into
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &appver) // Convert the nft json into the domain object
+		err := json.Unmarshal([]byte(nftJSON), &appver) // Convert the nft json into the domain object
 
-	if err == nil {
-		// Deep Copy
-		obj.AuditLog.Key = appver.AuditLog.Key
-		obj.AuditLog.UnmarshalNFT(cid2json)
+		if err == nil {
+			// Deep Copy
+			obj.AuditLog.Key = appver.AuditLog.Key
+			obj.AuditLog.UnmarshalNFT(cid2json)
 
-		obj.Components.Key = appver.Components.Key
-		obj.Components.UnmarshalNFT(cid2json)
+			obj.Components.Key = appver.Components.Key
+			obj.Components.UnmarshalNFT(cid2json)
 
-		obj.Created = appver.Created
+			obj.Created = appver.Created
 
-		obj.Creator.Key = appver.Creator.Key
-		obj.Creator.UnmarshalNFT(cid2json)
+			obj.Creator.Key = appver.Creator.Key
+			obj.Creator.UnmarshalNFT(cid2json)
 
-		obj.Domain.Key = appver.Domain.Key
-		obj.Domain.UnmarshalNFT(cid2json)
+			obj.Domain.Key = appver.Domain.Key
+			obj.Domain.UnmarshalNFT(cid2json)
 
-		obj.Name = appver.Name
+			obj.Name = appver.Name
 
-		obj.Owner.Key = appver.Owner.Key
-		obj.Owner.UnmarshalNFT(cid2json)
+			obj.Owner.Key = appver.Owner.Key
+			obj.Owner.UnmarshalNFT(cid2json)
 
-		obj.ParentKey = appver.ParentKey
-		obj.PredecessorKey = appver.PredecessorKey
+			obj.ParentKey = appver.ParentKey
+			obj.PredecessorKey = appver.PredecessorKey
+		}
 	}
 }

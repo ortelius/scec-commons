@@ -8,7 +8,7 @@ import (
 
 func TestNFT(t *testing.T) {
 
-	jsonObj := []byte("Hello World")
+	jsonObj := "Hello World"
 
 	expected := "bafkreiffsgtnic7uebaeuaixgph3pmmq2ywglpylzwrswv5so7m23hyuny"
 

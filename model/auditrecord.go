@@ -8,15 +8,14 @@ import (
 
 // AuditRecord defines a single audit event
 type AuditRecord struct {
-	Key     string    `json:"_key,omitempty"`
-	NftJSON string    `json:"_json,omitempty"`
-	Action  string    `json:"action"`
-	User    User      `json:"User"`
-	When    time.Time `json:"when"`
+	Key    string    `json:"_key,omitempty"`
+	Action string    `json:"action"`
+	User   User      `json:"User"`
+	When   time.Time `json:"when"`
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
-func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) []byte {
+func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
@@ -31,31 +30,29 @@ func (obj *AuditRecord) MarshalNFT(cid2json map[string]string) []byte {
 		When:    obj.When,
 	})
 
-	obj.NftJSON = string(data)
-	obj.Key = new(NFT).Init(data).Key
-	cid2json[obj.Key] = obj.NftJSON // Add cid=json for persisting later
+	obj.Key = new(NFT).Init(string(data)).Key
+	cid2json[obj.Key] = string(data) // Add cid=json for persisting later
 
-	return data
+	return string(data)
 }
 
 // UnmarshalNFT converts the JSON from NFT Storage to a new instance of the struct
 func (obj *AuditRecord) UnmarshalNFT(cid2json map[string]string) {
 	var auditrecord AuditRecord
 	var exists bool
-	var NftJSON string
+	var nftJSON string
 
 	// get the json from storage
-	if NftJSON, exists = cid2json[obj.Key]; exists {
-		obj.NftJSON = NftJSON // Set the nft json for the object
-	}
+	if nftJSON, exists = cid2json[obj.Key]; exists {
 
-	err := json.Unmarshal([]byte(obj.NftJSON), &auditrecord)
+		err := json.Unmarshal([]byte(nftJSON), &auditrecord)
 
-	if err == nil {
-		// Deep Copy
-		obj.Action = auditrecord.Action
-		obj.When = auditrecord.When
-		obj.User.Key = auditrecord.User.Key
-		obj.User.UnmarshalNFT(cid2json)
+		if err == nil {
+			// Deep Copy
+			obj.Action = auditrecord.Action
+			obj.When = auditrecord.When
+			obj.User.Key = auditrecord.User.Key
+			obj.User.UnmarshalNFT(cid2json)
+		}
 	}
 }
