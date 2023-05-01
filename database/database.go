@@ -56,9 +56,11 @@ func InitializeDB() DBConnection {
 		return dbConnection
 	}
 
-	dburl := getEnvDefault("ARGANGO_URL", "http://localhost:8529")
-	dbuser := getEnvDefault("ARGANGO_USER", "root")
-	dbpass := getEnvDefault("ARGANGO_PASS", "password")
+	dbhost := getEnvDefault("ARANGO_HOST", "localhost")
+	dbport := getEnvDefault("ARANGO_PORT", "8529")
+	dbuser := getEnvDefault("ARANGO_USER", "root")
+	dbpass := getEnvDefault("ARANGO_PASS", "")
+	dburl := getEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
 
 	if conn, err = http.NewConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
 		logger.Sugar().Fatalf("Failed to create HTTP connection: %v", err)
