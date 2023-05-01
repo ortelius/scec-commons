@@ -3,19 +3,20 @@ package database
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"os"
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
+
+var logger = InitLogger() // setup the logger
 
 // DBConnection is the structure that defined the database engine and collections
 type DBConnection struct {
 	Collection driver.Collection
 	Database   driver.Database
-	Context    context.Context
 }
 
 var initDone = false
@@ -29,6 +30,16 @@ func getEnvDefault(key, defVal string) string {
 	return val
 }
 
+// InitLogger sets up the Zap Logger to log to the console in a human readable format
+func InitLogger() *zap.Logger {
+	prodConfig := zap.NewProductionConfig()
+	prodConfig.Encoding = "console"
+	prodConfig.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+	prodConfig.EncoderConfig.EncodeDuration = zapcore.StringDurationEncoder
+	logger, _ := prodConfig.Build()
+	return logger
+}
+
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
 func InitializeDB() DBConnection {
 
@@ -37,7 +48,7 @@ func InitializeDB() DBConnection {
 	var conn driver.Connection
 	var client driver.Client
 	var err error
-	const databaseName = "examples_books"
+	const databaseName = "ortelius"
 
 	ctx := context.Background()
 
@@ -46,16 +57,18 @@ func InitializeDB() DBConnection {
 	}
 
 	dburl := getEnvDefault("ARGANGO_URL", "http://localhost:8529")
+	dbuser := getEnvDefault("ARGANGO_USER", "root")
+	dbpass := getEnvDefault("ARGANGO_PASS", "password")
 
 	if conn, err = http.NewConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
-		log.Fatalf("Failed to create HTTP connection: %v", err)
+		logger.Sugar().Fatalf("Failed to create HTTP connection: %v", err)
 	}
 
-	_, err = conn.SetAuthentication(driver.BasicAuthentication("root", "rootpassword"))
+	_, err = conn.SetAuthentication(driver.BasicAuthentication(dbuser, dbpass))
 
 	if err == nil {
 		if client, err = driver.NewClient(driver.ClientConfig{Connection: conn}); err != nil {
-			log.Fatalf("Failed to create Client: %v", err)
+			logger.Sugar().Fatalf("Failed to create Client: %v", err)
 		}
 
 		exists := false
@@ -70,22 +83,22 @@ func InitializeDB() DBConnection {
 
 		if exists {
 			if db, err = client.Database(ctx, databaseName); err != nil {
-				log.Fatalf("Failed to create Database: %v", err)
+				logger.Sugar().Fatalf("Failed to create Database: %v", err)
 			}
 		} else {
 			if db, err = client.CreateDatabase(ctx, databaseName, nil); err != nil {
-				log.Fatalf("Failed to create Database: %v", err)
+				logger.Sugar().Fatalf("Failed to create Database: %v", err)
 			}
 		}
 
-		exists, _ = db.CollectionExists(ctx, "books")
+		exists, _ = db.CollectionExists(ctx, "evidence")
 		if exists {
-			if col, err = db.Collection(ctx, "books"); err != nil {
-				log.Fatalf("Failed to use collection: %v", err)
+			if col, err = db.Collection(ctx, "evidence"); err != nil {
+				logger.Sugar().Fatalf("Failed to use collection: %v", err)
 			}
 		} else {
-			if col, err = db.CreateCollection(ctx, "books", nil); err != nil {
-				log.Fatalf("Failed to create collection: %v", err)
+			if col, err = db.CreateCollection(ctx, "evidence", nil); err != nil {
+				logger.Sugar().Fatalf("Failed to create collection: %v", err)
 			}
 		}
 
@@ -94,7 +107,6 @@ func InitializeDB() DBConnection {
 		dbConnection = DBConnection{
 			Database:   db,
 			Collection: col,
-			Context:    ctx,
 		}
 	}
 	return dbConnection
@@ -104,7 +116,7 @@ func InitializeDB() DBConnection {
 // store the cid/json data on NFT Storage or the OCI registry
 func PersistOnLTS(cid2json map[string]string) {
 
-	fmt.Printf("%+v\n", cid2json)
+	logger.Sugar().Infof("%+v\n", cid2json)
 }
 
 // FetchFromLTS interacts with the db abstraction microservice to
