@@ -22,7 +22,7 @@ type DBConnection struct {
 var initDone = false          // has the data been initialized
 var dbConnection DBConnection // database connection definition
 
-// GetEnvDefault is a convienence function for handling env vars
+// GetEnvDefault is a convenience function for handling env vars
 func GetEnvDefault(key, defVal string) string {
 	val, ex := os.LookupEnv(key) // get the env var
 	if !ex {                     // not found return default
