@@ -19,15 +19,16 @@ type DBConnection struct {
 	Database   driver.Database
 }
 
-var initDone = false
-var dbConnection DBConnection
+var initDone = false          // has the data been initialized
+var dbConnection DBConnection // database connection definition
 
-func getEnvDefault(key, defVal string) string {
-	val, ex := os.LookupEnv(key)
-	if !ex {
+// GetEnvDefault is a convienence function for handling env vars
+func GetEnvDefault(key, defVal string) string {
+	val, ex := os.LookupEnv(key) // get the env var
+	if !ex {                     // not found return default
 		return defVal
 	}
-	return val
+	return val // return value for env var
 }
 
 // InitLogger sets up the Zap Logger to log to the console in a human readable format
@@ -56,11 +57,11 @@ func InitializeDB() DBConnection {
 		return dbConnection
 	}
 
-	dbhost := getEnvDefault("ARANGO_HOST", "localhost")
-	dbport := getEnvDefault("ARANGO_PORT", "8529")
-	dbuser := getEnvDefault("ARANGO_USER", "root")
-	dbpass := getEnvDefault("ARANGO_PASS", "")
-	dburl := getEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
+	dbhost := GetEnvDefault("ARANGO_HOST", "localhost")
+	dbport := GetEnvDefault("ARANGO_PORT", "8529")
+	dbuser := GetEnvDefault("ARANGO_USER", "root")
+	dbpass := GetEnvDefault("ARANGO_PASS", "")
+	dburl := GetEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
 
 	if conn, err = http.NewConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
 		logger.Sugar().Fatalf("Failed to create HTTP connection: %v", err)
