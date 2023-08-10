@@ -5,8 +5,8 @@ import "encoding/json"
 
 // Swagger defines an OpenAPI or Swagger file
 type Swagger struct {
-	Key     string   `json:"_key,omitempty"`
-	Content []string `json:"content"`
+	Key     string          `json:"_key,omitempty"`
+	Content json.RawMessage `json:"content"`
 }
 
 // MarshalNFT converts the struct into a normalized JSON NFT
@@ -14,8 +14,8 @@ func (obj *Swagger) MarshalNFT(cid2json map[string]string) string {
 
 	// Sturct must be manually sorted alphabetically in order for consistent CID to be produced
 	data, _ := json.Marshal(&struct {
-		Content []string `json:"content"`
-		ObjType string   `json:"objtype"`
+		Content json.RawMessage `json:"content"`
+		ObjType string          `json:"objtype"`
 	}{
 		Content: obj.Content,
 		ObjType: "Swagger",
@@ -40,7 +40,7 @@ func (obj *Swagger) UnmarshalNFT(cid2json map[string]string) {
 
 		if err == nil {
 			// Deep Copy
-			obj.Content = append(obj.Content, swagger.Content...)
+			obj.Content = swagger.Content
 		}
 	}
 }
