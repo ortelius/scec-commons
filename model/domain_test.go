@@ -8,27 +8,26 @@ import (
 )
 
 func TestDomain(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
 		"name": "GLOBAL"
 	  }`)
 
-	expected := `{"objtype":"Domain","name":"GLOBAL"}`
+	expected := `{"name":"GLOBAL"}`
+	expectedCid := "bafkreic4j7wtiphcrzz4hpwyqszozkvyfgwfvmmvpblxekjff2nx6f4ism"
 
-	var dom2nft Domain // define user object to marshal into
+	// define user object to marshal into
+	var obj Domain
 
-	json.Unmarshal(jsonObj, &dom2nft)       // convert json string into the user object
-	nftJSON := dom2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", dom2nft.Key, dom2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2dom Domain // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := MakeNFT(obj)
+	// fmt.Println(cid)
+	assert.Equal(t, cid, expectedCid, "check persisted cid with test cid")
 
-	nft2dom.Key = dom2nft.Key             // set the nft json
-	nft2dom.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2dom.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled against expected results")
-
+	// convert all the cids back to json string
+	jsonStr, _ := MakeJSON(cid)
+	assert.Equal(t, jsonStr, expected, "check persisted cid json with test json string")
 }

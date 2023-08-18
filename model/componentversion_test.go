@@ -2,8 +2,9 @@ package model
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestComponentVersion(t *testing.T) {
@@ -17,27 +18,20 @@ func TestComponentVersion(t *testing.T) {
 		"predecessor_key": ""
 	  }`)
 
-	expected := `{"domain":{"_key":"bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle"},"name":"Hello World;v1.0.0","objtype":"ComponentVersion"}`
+	expected := `{"domain":{"name":"GLOBAL.My Project"},"name":"Hello World;v1.0.0"}`
+	expectedCid := "bafkreidbz3f4apbvla5whzprg7lofwiqefbeh6a44mwgmkpsezykzlpnmu"
 
-	var compver2nft ComponentVersion // define user object to marshal into
+	// define user object to marshal into
+	var obj ComponentVersion
 
-	json.Unmarshal(jsonObj, &compver2nft) // convert json string into the user object
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	if byteValue, err := json.Marshal(compver2nft); err == nil {
-		fmt.Printf("%s\n", string(byteValue))
-		fmt.Printf("%s\n", expected)
-	}
+	// create all cids for the json string
+	cid, _ := MakeNFT(obj)
+	assert.Equal(t, cid, expectedCid, "check persisted cid with test cid")
 
+	// convert all the cids back to json string
+	jsonStr, _ := MakeJSON(cid)
+	assert.Equal(t, jsonStr, expected, "check persisted cid json with test json string")
 }
-
-/*
-nftJSON := compver2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-// fmt.Printf("%s=%s\n", compver2nft.Key, compver2nft.NftJSON)
-assert.Equal(t, nftJSON, expected, "check nft json against expected results")
-
-var nft2compver ComponentVersion // define user object to marshal into
-
-nft2compver.Key = compver2nft.Key         // set the nft json
-nft2compver.UnmarshalNFT(cid2json)        // convert the json string into the user object
-check := nft2compver.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-assert.Equal(t, check, expected, "check unmarshalled user against expected results") */

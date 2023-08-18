@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -50,9 +51,8 @@ func getCid(cid string) (string, bool) {
 		cidFile.Close()
 
 		return string(byteValue), true
-	} else {
-		return "", false
 	}
+	return "", false
 }
 
 func genCid(jsonStr string) string {
@@ -76,7 +76,16 @@ func splitJSON(r rune) bool {
 	return r == ':' || r == ',' || r == '"' || r == '{' || r == '}' || r == '[' || r == ']'
 }
 
-func makeNFT(jsonStr string) string {
+// MakeNFT normalizes the object into the corresponding cids=json string handling nested objects
+// Parameters: object of any type
+// Returns: CID for the object and json string suitable for storing in Arango (ie. _key=cid and objtype added)
+func MakeNFT(obj any) (string, string) {
+
+	jsonStr := ""
+
+	if byteValue, err := json.Marshal(obj); err == nil {
+		jsonStr = string(byteValue)
+	}
 
 	rootCid := ""
 	jsonMap := make(map[string]interface{})
@@ -146,14 +155,14 @@ func makeNFT(jsonStr string) string {
 		}
 
 		for group := range groupmap {
-			sortedJson := groupmap[group]
-			sort.Strings(sortedJson)
+			sortedJSON := groupmap[group]
+			sort.Strings(sortedJSON)
 
 			jsonStr := ""
-			if strings.Contains(strings.Join(sortedJson, ","), ":") {
-				jsonStr = "{" + strings.Join(sortedJson, ",") + "}"
+			if strings.Contains(strings.Join(sortedJSON, ","), ":") {
+				jsonStr = "{" + strings.Join(sortedJSON, ",") + "}"
 			} else {
-				jsonStr = "[" + strings.Join(sortedJson, ",") + "]"
+				jsonStr = "[" + strings.Join(sortedJSON, ",") + "]"
 			}
 
 			cid := genCid(jsonStr)
@@ -165,13 +174,27 @@ func makeNFT(jsonStr string) string {
 				rootCid = cid
 			}
 
+			if err := os.Mkdir("nfts", 0755); err != nil && !os.IsExist(err) {
+				fmt.Println(err)
+			}
 			os.WriteFile("nfts/"+cid+".nft", []byte(jsonStr), 0644)
 		}
 	}
-	return rootCid
+
+	objtype := reflect.TypeOf(obj).String()
+
+	if strings.Count(objtype, ".") > 0 {
+		parts := strings.Split(objtype, ".")
+		objtype = parts[len(parts)-1]
+	}
+	dbStr := fmt.Sprintf("{\"_key\":\"%s\",\"objtype\":\"%s\",%s", rootCid, objtype, jsonStr[1:])
+	return rootCid, dbStr
 }
 
-func makeJSON(cid string) (string, bool) {
+// MakeJSON converts a CID back into a json string.  It will resolve any nested cids and expand as well.
+// Parameters: CID to expand
+// Returns: expanded json string and bool if the cid exists or not
+func MakeJSON(cid string) (string, bool) {
 	jsonStr, exists := getCid(cid)
 
 	if exists {
