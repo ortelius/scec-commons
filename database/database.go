@@ -2,8 +2,6 @@
 // Contains utility functions for marshalling/unmaeshalling json to cid/nfts
 package database
 
-//lint:file-ignore S1034 Ignore all assignments for switch statements
-
 import (
 	"context"
 	"os"
@@ -27,6 +25,8 @@ import (
 
 	mh "github.com/multiformats/go-multihash"
 )
+
+//lint:file-ignore S1034 Ignore all assignments for switch statements
 
 var logger = InitLogger() // setup the logger
 
