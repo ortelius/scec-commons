@@ -4,26 +4,26 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestComponentVersionDetails(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreib4oglwtfgurisidrzqyppgx3tl5nuxic6fl4subb2dvkalb4hyqi",
+
 		"name": "Hello World;v1.0.0",
 		"domain": {
-			"_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
+
 			"name": "GLOBAL.My Project"
 		},
 		"parent_key": "",
 		"predecessor_key": "",
 		"owner": {
-			"_key": "bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi",
+
 			"name": "admin",
 			"domain": {
-				"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
+
 				"name": "GLOBAL"
 			},
 			"email": "admin@ortelius.io",
@@ -31,10 +31,10 @@ func TestComponentVersionDetails(t *testing.T) {
 			"realname": "Ortelius Admin"
 		},
 		"creator": {
-			"_key": "bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi",
+
 			"name": "admin",
 			"domain": {
-				"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
+
 				"name": "GLOBAL"
 			},
 			"email": "admin@ortelius.io",
@@ -44,9 +44,9 @@ func TestComponentVersionDetails(t *testing.T) {
 		"created": "2023-04-23T10:20:30.400+02:30",
 		"comptype": "docker",
 		"packages": {
-			"_key": "bafkreia455fosaucpob7sebue7ae5pojh2gjrc5fijytq5ruunhn7ndfpi",
+
 			"packages": [{
-					"_key": "bafkreie72z3l77p6nkpkrmfyxqxopwnjiq3ztkur7ayhloleyqljsuf5ve",
+
 					"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 					"name": "libc-bin",
 					"version": "2.19.18+deb8u7",
@@ -54,7 +54,7 @@ func TestComponentVersionDetails(t *testing.T) {
 					"license": "GP-2.0"
 				},
 				{
-					"_key": "bafkreianebpkdcvcna7ewjmpcspbw7k67lpf6oiuawdizxuwv6gnojrdla",
+
 					"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 					"name": "libcpp-bin",
 					"version": "2.19.18+deb8u7",
@@ -64,43 +64,43 @@ func TestComponentVersionDetails(t *testing.T) {
 			]
 		},
 		"vulnerabilties": {
-			"_key": "bafkreigt6hy7df5mqqo7akcvkmu62aovlrv7sm7mqw6udp2f3777czh5i4",
+
 			"vulnerabilties": [{
-					"_key": "bafkreie4t6xqy65fsykdtbz5rcwjivii7rpapjq55zwnpnbl6uj6dysdbu",
+
 					"name": "CVE-1823"
 				},
 				{
-					"_key": "bafkreifpc2htaxkfttbyzywe4nsn2kbicq6w5rj2sqf2lr6nw5qw5qqzka",
+
 					"name": "CVE-1824"
 				}
 			]
 		},
 		"readme": {
-			"_key": "bafkreigp3a4djvcp5uidon4366bnggouiw4ghts6ngwfgt5jncbtj6lshy",
+
 			"content": ["# README", "## Sample"]
 		},
 		"license": {
-			"_key": "bafkreicv5dl7ozitvglmfm6jsqvw3f2pqqwpocgl6vbefgratj2gohtvmy",
+
 			"content": ["# Apache 2", "## Summary"]
 		},
 		"swagger": {
-			"_key": "bafkreihntxpcz47l7blasyee3tv2as6qthk44yifi7blwswi6w5dbnpcza",
+
 			"content": ["# Rest APIs", "## GET /user"]
 		},
 		"applications": {
-			"_key": "bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri"
+
 			"applications": []
 		},
 		"providing": {
-			"_key": "bafkreifpq5fvyuajskoik4j7n362edrr6ubkoxj5gfm74gk2lxdpsw2fmy",
+
 			"provides": ["/user"]
 		},
 		"consuming": {
-			"_key": "bafkreibz4duaceeggbwnl7zhvzqbttyekglpwzac4dr57ig37fzwjvdcaa",
+
 			"consumes": ["/user"]
 		},
 		"attrs": {
-			"_key": "bafkreihvif2vgdjswemtay7urmaehnzwuzo2qr2sgbfivk737fxdv6juda",
+
 			"builddate": "Mon Jan 31 16:18:26 2022",
 			"build_key": "178",
 			"buildurl": "https://circleci.com/gh/ortelius/store-cartservice/178",
@@ -121,10 +121,10 @@ func TestComponentVersionDetails(t *testing.T) {
 			"pagerdutybusinessurl": "https://pagerduty.com/business/ms-chartservice",
 			"pagerdutyurl": "https://pagerduty.com/business/ms-chartservice",
 			"serviceowner": {
-				"_key": "bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi",
+
 				"name": "admin",
 				"domain": {
-					"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
+
 					"name": "GLOBAL"
 				},
 				"email": "admin@ortelius.io",
@@ -135,20 +135,22 @@ func TestComponentVersionDetails(t *testing.T) {
 		}
 	}`)
 
-	expected := `{"applications":{"_key":"bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri"},"attrs":{"_key":"bafkreigomg3gqp3k732jjg63bryzi5xlwjs74kw5ijte2vqmrr4qffz4ai"},"autditlog":{"_key":"bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri"},"comptype":"","consuming":{"_key":"bafkreigstwwmxwvxzgpbq7reb3aakqyewdr4haucw6lh6rszew7hysfl2m"},"created":"0001-01-01T00:00:00Z","creator":{"_key":"bafkreicyvutyito2jltc62vvvudogzk7zyint3dq6q32nhyackeekokiti"},"domain":{"_key":"bafkreiafns7npg5wgy7hzypm255tbfeyws552tx2sgksm2ta74o3mhlxnu"},"license":{"_key":"bafkreigrdojynv5hckqqh46hyrs6a2mfbuxdqdjn6lfbdaopjhuddhgcua"},"name":"","objtype":"ComponentVersionDetails","owner":{"_key":"bafkreicyvutyito2jltc62vvvudogzk7zyint3dq6q32nhyackeekokiti"},"packages":{"_key":"bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri"},"providing":{"_key":"bafkreid3dyog5ulkyb7wihve2gzgs34zij4f2v5jvup24qcoxrzcb6sqgq"},"readme":{"_key":"bafkreidp5ldgzt3yq3ktdtvktbszmhsouvizq34kzobbchhpa5ztdkp42e"},"swagger":{"_key":"bafkreifgnk7ql6jsh35wxzhxqagirugmxr22lrnv3cvpqc5sowikqiw7pa"},"vulnerabilities":{"_key":"bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri"}}`
+	expected := "{\"attrs\":{\"builddate\":\"0001-01-01T00:00:00Z\",\"gitbranchcreatetimestamp\":\"0001-01-01T00:00:00Z\",\"gitcommittimestamp\":\"0001-01-01T00:00:00Z\",\"serviceowner\":{\"domain\":{\"name\":\"\"},\"name\":\"\"}},\"comptype\":\"docker\",\"consuming\":{\"consumes\":[\"/user\"]},\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"GLOBAL.My Project\"},\"license\":{\"content\":[\"# Apache 2\",\"## Summary\"]},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"ComponentVersionDetails\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"packages\":{\"packages\":[{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"},{\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}]},\"providing\":{\"provides\":[\"/user\"]},\"readme\":{\"content\":[\"# README\",\"## Sample\"]},\"swagger\":{\"content\":[\"# Rest APIs\",\"## GET /user\"]},\"vulnerabilties\":{\"vulnerabilties\":[{\"name\":\"CVE-1823\"},{\"name\":\"CVE-1824\"}]}}"
+	expectedCid := "bafkreicmf3egdhty2kiimwh42qqgumuqnqgi3xvt7ziho2n2t5tnremb4q"
 
-	var compver2nft ComponentVersionDetails // define user object to marshal into
+	// define user object to marshal into
+	var obj ComponentVersionDetails
 
-	json.Unmarshal(jsonObj, &compver2nft)       // convert json string into the user object
-	nftJSON := compver2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", compver2nft.Key, compver2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2compver ComponentVersionDetails // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2compver.Key = compver2nft.Key         // set the nft json
-	nft2compver.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2compver.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

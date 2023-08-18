@@ -4,31 +4,33 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSwagger(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreiesors5xgoehdkpe6dc36y2eweosixks6qkpfi6qj36ed4o4c6ene",
+
 		"content": {"openapi":"3.0.2"}
 	  }`)
 
 	expected := `{"content":{"openapi":"3.0.2"},"objtype":"Swagger"}`
+	expectedCid := "bafkreigkrj4ipthicjkveygdejdt3m24vkqtz22v6ddrhoi5xtszmhk7ji"
 
-	var swagger2nft Swagger // define user object to marshal into
+	// define user object to marshal into
+	var obj Swagger
 
-	json.Unmarshal(jsonObj, &swagger2nft)       // convert json string into the user object
-	nftJSON := swagger2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", swagger2nft.Key, nftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2swagger Swagger // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2swagger.Key = swagger2nft.Key         // set the nft json
-	nft2swagger.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2swagger.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

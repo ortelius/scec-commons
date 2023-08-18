@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,8 +14,8 @@ func TestDomain(t *testing.T) {
 		"name": "GLOBAL"
 	  }`)
 
-	expected := `{"name":"GLOBAL"}`
-	expectedCid := "bafkreic4j7wtiphcrzz4hpwyqszozkvyfgwfvmmvpblxekjff2nx6f4ism"
+	expected := "{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"}"
+	expectedCid := "bafkreihfbbgm73jj22esx7wni4npeqcwr2tn6zobgfwkjkqnua4em5fgja"
 
 	// define user object to marshal into
 	var obj Domain
@@ -23,11 +24,11 @@ func TestDomain(t *testing.T) {
 	json.Unmarshal(jsonObj, &obj)
 
 	// create all cids for the json string
-	cid, _ := MakeNFT(obj)
+	cid, _ := database.MakeNFT(obj)
 	// fmt.Println(cid)
-	assert.Equal(t, cid, expectedCid, "check persisted cid with test cid")
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
 	// convert all the cids back to json string
-	jsonStr, _ := MakeJSON(cid)
-	assert.Equal(t, jsonStr, expected, "check persisted cid json with test json string")
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 }

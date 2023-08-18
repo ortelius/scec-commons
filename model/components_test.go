@@ -4,29 +4,29 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestComponents(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreibpknufg2ciqkiqlupkglpmlrck5askj3sscieiedwwtwrcffdzwe",
+
 		"components": [{
-				"_key": "bafkreieu66waq6jcefgbaxlwkeg6cnqoj5zlc63wghddh3ngtzh7olp37u",
+
 				"name": "Hello World;v1.0.0",
 				"domain": {
-					"_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
+
 					"name": "GLOBAL.My Project"
 				},
 				"parent_key": "",
 				"predecessor_key": ""
 			},
 			{
-				"_key": "bafkreie77ros2gduaq2mkji5f2deckk2mkgqw4pyveumrwxjzcuzgkda3u",
+
 				"name": "FooBar;v1.0.0",
 				"domain": {
-					"_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
+
 					"name": "GLOBAL.My Project"
 				},
 				"parent_key": "",
@@ -35,20 +35,22 @@ func TestComponents(t *testing.T) {
 		]
 	}`)
 
-	expected := `{"components":[{"_key":"bafkreieu66waq6jcefgbaxlwkeg6cnqoj5zlc63wghddh3ngtzh7olp37u"},{"_key":"bafkreie77ros2gduaq2mkji5f2deckk2mkgqw4pyveumrwxjzcuzgkda3u"}]}`
+	expected := "{\"components\":[{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello World;v1.0.0\"},{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"FooBar;v1.0.0\"}],\"objtype\":\"Components\"}"
+	expectedCid := "bafkreif6vuydubg7cam3imzikxw5lh6l6uu7s5hxkvbzda2baculds7m6q"
 
-	var comps2nft Components // define user object to marshal into
+	// define user object to marshal into
+	var obj Components
 
-	json.Unmarshal(jsonObj, &comps2nft)       // convert json string into the user object
-	nftJSON := comps2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", comps2nft.Key, comps2nft.NftJSON)
-	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2comps Components // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2comps.Key = comps2nft.Key           // set the nft json
-	nft2comps.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2comps.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

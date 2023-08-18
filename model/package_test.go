@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPackage(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreie72z3l77p6nkpkrmfyxqxopwnjiq3ztkur7ayhloleyqljsuf5ve",
+
 		"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 		"name": "libc-bin",
 		"version": "2.19.18+deb8u7",
@@ -19,20 +19,22 @@ func TestPackage(t *testing.T) {
 		"license": "GP-2.0"
 	  }`)
 
-	expected := `{"license":"GP-2.0","name":"libc-bin","objtype":"Package","purl":"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64\u0026upstream=glibc\u0026distro=debian-8","version":"2.19.18+deb8u7"}`
+	expected := "{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}"
+	expectedCid := "bafkreifwfll3ytl3ibzlvfqn6jqhdubbls5rcnqdh6cwbczgw2vk7xw6gi"
 
-	var pkg2nft Package // define user object to marshal into
+	// define user object to marshal into
+	var obj Package
 
-	json.Unmarshal(jsonObj, &pkg2nft)       // convert json string into the user object
-	nftJSON := pkg2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", pkg2nft.Key, pkg2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2pkg Package // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2pkg.Key = pkg2nft.Key             // set the nft json
-	nft2pkg.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2pkg.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

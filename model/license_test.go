@@ -4,31 +4,32 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLicense(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreicv5dl7ozitvglmfm6jsqvw3f2pqqwpocgl6vbefgratj2gohtvmy",
+
 		"content": ["# Apache 2", "## Summary"]
 	  }`)
 
-	expected := `{"content":["# Apache 2","## Summary"],"objtype":"License"}`
+	expected := "{\"content\":[\"# Apache 2\",\"## Summary\"],\"objtype\":\"License\"}"
+	expectedCid := "bafkreiddm2abcmm7l2xszf7te57no5gmwda344ghq3krwqaapcn6wcxeoi"
 
-	var license2nft License // define user object to marshal into
+	// define user object to marshal into
+	var obj License
 
-	json.Unmarshal(jsonObj, &license2nft)       // convert json string into the user object
-	nftJSON := license2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", license2nft.Key, license2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2license License // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2license.Key = license2nft.Key         // set the nft json
-	nft2license.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2license.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled against expected results")
-
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 }

@@ -4,17 +4,15 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestApplicationVersion(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreia4ioz2a6o3w5ijarqbxwfixcmevlqukjd4bndkw4bj7vosrjqfh4",
 		"name": "Hello App;v1",
 		"domain": {
-		  "_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
 		  "name": "GLOBAL.My Project"
 		},
 		"parent_key": "",
@@ -22,20 +20,22 @@ func TestApplicationVersion(t *testing.T) {
 		"deployments": [121]
 	  }`)
 
-	expected := `{"deployments":[121],"domain":{"_key":"bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle"},"name":"Hello App;v1","objtype":"ApplicationVersion"}`
+	expected := "{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersion\"}"
+	expectedCid := "bafkreidx3fghtic75jkwpla35prpkcsoikj2u467byinpe567yhuozpfyq"
 
-	var appver2nft ApplicationVersion // define user object to marshal into
+	// define user object to marshal into
+	var obj ApplicationVersion
 
-	json.Unmarshal(jsonObj, &appver2nft)       // convert json string into the user object
-	nftJSON := appver2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", appver2nft.Key, appver2nft.NftJSON)
-	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2appver ApplicationVersion // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
 
-	nft2appver.Key = appver2nft.Key          // set the nft json
-	nft2appver.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2appver.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
+
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

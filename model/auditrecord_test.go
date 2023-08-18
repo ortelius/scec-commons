@@ -4,19 +4,19 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAuditRecord(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreibpkskhzdvulykusspc7xfvpd3tflmiz6yftdhdi2a7d6xtipqbqa",
+
 		"action": "Created",
 		"user": {
-		  "_key": "bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi",
+
 		  "domain": {
-			"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
+
 			"name": "GLOBAL"
 		  },
 		  "email": "admin@ortelius.io",
@@ -27,20 +27,22 @@ func TestAuditRecord(t *testing.T) {
 		"when": "2023-04-23T10:20:30.400+02:30"
 	  }`)
 
-	expected := `{"action":"Created","objtype":"AuditRecord","User":{"_key":"bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi"},"when":"2023-04-23T10:20:30.4+02:30"}`
+	expected := "{\"User\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"action\":\"Created\",\"objtype\":\"AuditRecord\",\"when\":\"2023-04-23T10:20:30.4+02:30\"}"
+	expectedCid := "bafkreian4ijnrscae2acdslezsac26v2rzzy5sj5gnz4j532p4cv7tyvpi"
 
-	var audit2nft AuditRecord // define user object to marshal into
+	// define user object to marshal into
+	var obj AuditRecord
 
-	json.Unmarshal(jsonObj, &audit2nft)       // convert json string into the user object
-	nftJSON := audit2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", audit2nft.Key, audit2nft.NftJSON)
-	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2audit AuditRecord // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2audit.Key = audit2nft.Key           // set the nft json
-	nft2audit.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2audit.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,8 +19,8 @@ func TestComponentVersion(t *testing.T) {
 		"predecessor_key": ""
 	  }`)
 
-	expected := `{"domain":{"name":"GLOBAL.My Project"},"name":"Hello World;v1.0.0"}`
-	expectedCid := "bafkreidbz3f4apbvla5whzprg7lofwiqefbeh6a44mwgmkpsezykzlpnmu"
+	expected := "{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"ComponentVersion\"}"
+	expectedCid := "bafkreig4b2yok2qfyfti7x2j574uef4b7yfqrbwzj26rarvo7dexkczbxq"
 
 	// define user object to marshal into
 	var obj ComponentVersion
@@ -28,10 +29,11 @@ func TestComponentVersion(t *testing.T) {
 	json.Unmarshal(jsonObj, &obj)
 
 	// create all cids for the json string
-	cid, _ := MakeNFT(obj)
-	assert.Equal(t, cid, expectedCid, "check persisted cid with test cid")
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
 	// convert all the cids back to json string
-	jsonStr, _ := MakeJSON(cid)
-	assert.Equal(t, jsonStr, expected, "check persisted cid json with test json string")
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 }

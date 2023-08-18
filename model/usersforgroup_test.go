@@ -4,32 +4,34 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUsersForGroup(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreidoh27gg2wqnitspexsqjv2vjq56s5w2sgkeskbqqctgpjwntehkm",
+
 		"group": "administrators",
 		"users": [ "testadmin", "admin" ]
 	  }`)
 
-	expected := `{"group":"administrators","objtype":"UsersForGroup","users":["testadmin","admin"]}`
+	expected := "{\"group\":\"administrators\",\"objtype\":\"UsersForGroup\",\"users\":[\"admin\",\"testadmin\"]}"
+	expectedCid := "bafkreigkc6rwtkltn2dhqivs2mfvlzk6djkajfnogffnmubzlqjmioea7m"
 
-	var users4grp2nft UsersForGroup // define user object to marshal into
+	// define user object to marshal into
+	var obj UsersForGroup
 
-	json.Unmarshal(jsonObj, &users4grp2nft)       // convert json string into the user object
-	nftJSON := users4grp2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", users4grp2nft.Key, users4grp2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2users4grp UsersForGroup // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2users4grp.Key = users4grp2nft.Key       // set the nft json
-	nft2users4grp.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2users4grp.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

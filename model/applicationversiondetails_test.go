@@ -4,27 +4,27 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestApplicationVersionDetails(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreibmf6snxkzqqosl4fx4d67unxhq65ekybmsnxehhiwb4cxdnbeduu",
+
 		"name": "Hello App;v1",
 		"domain": {
-			"_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
+
 			"name": "GLOBAL.My Project"
 		},
 		"parent_key": "",
 		"predecessor_key": "",
 		"deployments": [],
 		"owner": {
-			"_key": "bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi",
+
 			"name": "admin",
 			"domain": {
-				"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
+
 				"name": "GLOBAL"
 			},
 			"email": "admin@ortelius.io",
@@ -32,10 +32,10 @@ func TestApplicationVersionDetails(t *testing.T) {
 			"realname": "Ortelius Admin"
 		},
 		"creator": {
-			"_key": "bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi",
+
 			"name": "admin",
 			"domain": {
-				"_key": "bafkreicjtrtqndgtn37wc2up26sombgyh6uqwnn4orarfdqyw63lvg5aty",
+
 				"name": "GLOBAL"
 			},
 			"email": "admin@ortelius.io",
@@ -44,22 +44,22 @@ func TestApplicationVersionDetails(t *testing.T) {
 		},
 		"created": "2023-04-23T10:20:30.400+02:30",
 		"components": {
-				"_key": "bafkreibpknufg2ciqkiqlupkglpmlrck5askj3sscieiedwwtwrcffdzwe",
+
 				"components": [{
-						"_key": "bafkreieu66waq6jcefgbaxlwkeg6cnqoj5zlc63wghddh3ngtzh7olp37u",
+
 						"name": "Hello World;v1.0.0",
 						"domain": {
-							"_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
+
 							"name": "GLOBAL.My Project"
 						},
 						"parent_key": "",
 						"predecessor_key": ""
 					},
 					{
-						"_key": "bafkreie77ros2gduaq2mkji5f2deckk2mkgqw4pyveumrwxjzcuzgkda3u",
+
 						"name": "FooBar;v1.0.0",
 						"domain": {
-							"_key": "bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle",
+
 							"name": "GLOBAL.My Project"
 						},
 						"parent_key": "",
@@ -68,25 +68,27 @@ func TestApplicationVersionDetails(t *testing.T) {
 				]
 		},
 		"auditlog": {
-			"_key": "bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri",
+
 			"auditlog": []
 		}
 	}`)
 
-	expected := `{"auditlog":{"_key":"bafkreicecnx2gvntm6fbcrvnc336qze6st5u7qq7457igegamd3bzkx7ri"},"components":{"_key":"bafkreibpknufg2ciqkiqlupkglpmlrck5askj3sscieiedwwtwrcffdzwe"},"created":"2023-04-23T10:20:30.4+02:30","creator":{"_key":"bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi"},"domain":{"_key":"bafkreih5u7cqrnv5oc2xutjhzylffaw7xvlw5nvthtlb5mg43s7wazgxle"},"name":"Hello App;v1","objtype":"ApplicationVersionDetails","owner":{"_key":"bafkreiaj3gyc7k2gqs7roc6rduasmt4htgjagrqfulo2cd566xk3tei6zi"}}`
+	expected := "{\"components\":{\"components\":[{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello World;v1.0.0\"},{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"FooBar;v1.0.0\"}]},\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersionDetails\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}}"
+	expectedCid := "bafkreib2rmpefrysoitdg7mprkfsol5jbgo6ejdtzxurbl5iub7gqg7mea"
 
-	var appver2nft ApplicationVersionDetails // define user object to marshal into
+	// define user object to marshal into
+	var obj ApplicationVersionDetails
 
-	json.Unmarshal(jsonObj, &appver2nft) // convert json string into the user object
-	// fmt.Printf("%+v\n\n", appver2nft)
-	nftJSON := appver2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	assert.Equal(t, nftJSON, expected, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2appver ApplicationVersionDetails // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2appver.Key = appver2nft.Key          // set the nft json
-	nft2appver.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2appver.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, check, expected, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

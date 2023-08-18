@@ -4,31 +4,33 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestConsuming(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreibz4duaceeggbwnl7zhvzqbttyekglpwzac4dr57ig37fzwjvdcaa",
+
 		"consumes": ["/user"]
 	  }`)
 
-	expected := `{"consumes":["/user"],"objtype":"Consuming"}`
+	expected := "{\"consumes\":[\"/user\"],\"objtype\":\"Consuming\"}"
+	expectedCid := "bafkreiax3vxopxpaz24iqrqnm6f2n4jckz2mstjwt2nc2heursfu56ufoy"
 
-	var consuming2nft Consuming // define user object to marshal into
+	// define user object to marshal into
+	var obj Consuming
 
-	json.Unmarshal(jsonObj, &consuming2nft)       // convert json string into the user object
-	nftJSON := consuming2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", consuming2nft.Key, consuming2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2consuming Consuming // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2consuming.Key = consuming2nft.Key       // set the nft json
-	nft2consuming.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2consuming.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }

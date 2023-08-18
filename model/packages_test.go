@@ -4,16 +4,16 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/ortelius/scec-commons/database"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPackages(t *testing.T) {
-	cid2json := make(map[string]string, 0)
 
 	jsonObj := []byte(`{
-		"_key": "bafkreia455fosaucpob7sebue7ae5pojh2gjrc5fijytq5ruunhn7ndfpi",
+
 		"packages": [{
-				"_key": "bafkreie72z3l77p6nkpkrmfyxqxopwnjiq3ztkur7ayhloleyqljsuf5ve",
+
 				"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 				"name": "libc-bin",
 				"version": "2.19.18+deb8u7",
@@ -21,7 +21,7 @@ func TestPackages(t *testing.T) {
 				"license": "GP-2.0"
 			},
 			{
-				"_key": "bafkreianebpkdcvcna7ewjmpcspbw7k67lpf6oiuawdizxuwv6gnojrdla",
+
 				"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 				"name": "libcpp-bin",
 				"version": "2.19.18+deb8u7",
@@ -31,20 +31,22 @@ func TestPackages(t *testing.T) {
 		]
 	}`)
 
-	expected := `{"packages":[{"_key":"bafkreie72z3l77p6nkpkrmfyxqxopwnjiq3ztkur7ayhloleyqljsuf5ve"},{"_key":"bafkreianebpkdcvcna7ewjmpcspbw7k67lpf6oiuawdizxuwv6gnojrdla"}]}`
+	expected := "{\"objtype\":\"Packages\",\"packages\":[{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"},{\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}]}"
+	expectedCid := "bafkreifuhcggcesx3vgombuepe6gi7juombr2sqzi2wvw4ko63xl7xeioa"
 
-	var pkgs2nft Packages // define user object to marshal into
+	// define user object to marshal into
+	var obj Packages
 
-	json.Unmarshal(jsonObj, &pkgs2nft)       // convert json string into the user object
-	nftJSON := pkgs2nft.MarshalNFT(cid2json) // generate the cid and nft json for user object
-	// fmt.Printf("%s=%s\n", pkgs2nft.Key, pkgs2nft.NftJSON)
-	assert.Equal(t, expected, nftJSON, "check nft json against expected results")
+	// convert json string into the user object
+	json.Unmarshal(jsonObj, &obj)
 
-	var nft2pkgs Packages // define user object to marshal into
+	// create all cids for the json string
+	cid, _ := database.MakeNFT(obj)
+	// 	fmt.Println(cid)
+	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
-	nft2pkgs.Key = pkgs2nft.Key            // set the nft json
-	nft2pkgs.UnmarshalNFT(cid2json)        // convert the json string into the user object
-	check := nft2pkgs.MarshalNFT(cid2json) // recalcuate the cid and nft json for the new user object
-	assert.Equal(t, expected, check, "check unmarshalled user against expected results")
+	// convert all the cids back to json string
+	jsonStr, _ := database.MakeJSON(cid)
+	assert.Equal(t, expected, jsonStr, "check persisted cid json with test json string")
 
 }
