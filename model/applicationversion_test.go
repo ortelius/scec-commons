@@ -30,7 +30,7 @@ func TestApplicationVersion(t *testing.T) {
 	json.Unmarshal(jsonObj, &obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(obj)
+	cid, _ := database.MakeNFT(&obj)
 
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

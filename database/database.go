@@ -5,11 +5,12 @@ package database
 import (
 	"context"
 	"os"
+	"reflect"
+	"regexp"
 
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -225,6 +226,8 @@ func MakeNFT(obj any) (string, string) {
 		parts := strings.Split(objtype, ".")
 		objtype = parts[len(parts)-1]
 	}
+	repl := regexp.MustCompile(`"_key":\s*".*","`)
+	repl.ReplaceAllString(jsonStr, "")
 
 	rootCid := ""
 	jsonMap := make(map[string]interface{})
@@ -323,6 +326,11 @@ func MakeNFT(obj any) (string, string) {
 			}
 			os.WriteFile("nfts/"+cid+".nft", []byte(jsonStr), 0644)
 		}
+	}
+
+	f := reflect.ValueOf(obj).Elem().FieldByName("Key")
+	if f.IsValid() && f.CanSet() {
+		f.SetString(rootCid)
 	}
 
 	dbStr := fmt.Sprintf("{\"_key\":\"%s\",\"objtype\":\"%s\",%s", rootCid, objtype, jsonStr[1:])

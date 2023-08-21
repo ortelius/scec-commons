@@ -8,7 +8,6 @@ import (
 // ComponentVersionDetails defines a Version of a Component including fine grained details
 type ComponentVersionDetails struct {
 	Key             string          `json:"_key,omitempty"`
-	Applications    Applications    `json:"applications,omitempty"`
 	Attrs           CompAttrs       `json:"attrs,omitempty"`
 	AuditLog        AuditLog        `json:"autditlog,omitempty"`
 	CompType        string          `json:"comptype"`
