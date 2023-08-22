@@ -20,13 +20,13 @@ func TestUsersForGroup(t *testing.T) {
 	expectedCid := "bafkreigkc6rwtkltn2dhqivs2mfvlzk6djkajfnogffnmubzlqjmioea7m"
 
 	// define user object to marshal into
-	var obj UsersForGroup
+	obj := NewUsersForGroup()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

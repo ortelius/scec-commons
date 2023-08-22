@@ -19,13 +19,13 @@ func TestSwagger(t *testing.T) {
 	expectedCid := "bafkreigkrj4ipthicjkveygdejdt3m24vkqtz22v6ddrhoi5xtszmhk7ji"
 
 	// define user object to marshal into
-	var obj Swagger
+	obj := NewSwagger()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

@@ -19,17 +19,17 @@ func TestGroup(t *testing.T) {
 		}
 	  }`)
 
-	expected := "{\"domain\":{\"name\":\"GLOBAL\"},\"name\":\"Administrators\",\"objtype\":\"Group\"}"
-	expectedCid := "bafkreiam46rnoswipyv7qyysnow5rxuaoq2wsatd2fwynciwkm3sg5ocra"
+	expected := "{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"name\":\"Administrators\",\"objtype\":\"Group\"}"
+	expectedCid := "bafkreiavyiihdr4k5ijrzkuva2byt2kqpnpxz5rwovsobag7tcwx5gsknu"
 
 	// define user object to marshal into
-	var obj Group
+	obj := NewGroup()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

@@ -3,7 +3,12 @@ package model
 
 // DeploymentDetails defines a deployment plus the associated log
 type DeploymentDetails struct {
-	Key        string     `json:"_key,omitempty"`
-	Deployment Deployment `json:"deployment"`
-	Log        []string   `json:"log,omitempty"`
+	Key        string      `json:"_key,omitempty"`
+	ObjType    string      `json:"objtype,omitempty"`
+	Deployment *Deployment `json:"deployment"`
+	Log        []string    `json:"log,omitempty"`
+}
+
+func NewDeploymentDetails() *DeploymentDetails {
+	return &DeploymentDetails{ObjType: "DeploymentDetails", Deployment: NewDeployment()}
 }

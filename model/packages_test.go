@@ -35,13 +35,13 @@ func TestPackages(t *testing.T) {
 	expectedCid := "bafkreifuhcggcesx3vgombuepe6gi7juombr2sqzi2wvw4ko63xl7xeioa"
 
 	// define user object to marshal into
-	var obj Packages
+	obj := NewPackages()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

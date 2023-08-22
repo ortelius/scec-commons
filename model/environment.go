@@ -8,9 +8,14 @@ import (
 // Environment defines a logical location that the deployment was perform against
 type Environment struct {
 	Key     string    `json:"_key,omitempty"`
+	ObjType string    `json:"objtype,omitempty"`
 	Created time.Time `json:"created"`
-	Creator User      `json:"creator"`
-	Domain  Domain    `json:"domain"`
+	Creator *User     `json:"creator"`
+	Domain  *Domain   `json:"domain"`
 	Name    string    `json:"name"`
-	Owner   User      `json:"owner"`
+	Owner   *User     `json:"owner"`
+}
+
+func NewEnvironment() *Environment {
+	return &Environment{ObjType: "Environment", Creator: NewUser(), Domain: NewDomain(), Owner: NewUser()}
 }

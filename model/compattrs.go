@@ -8,6 +8,7 @@ import (
 // CompAttrs defines the well known attributes for a Component
 type CompAttrs struct {
 	Key                      string    `json:"_key,omitempty"`
+	ObjType                  string    `json:"objtype,omitempty"`
 	Basename                 string    `json:"basename,omitempty"`
 	BuildDate                time.Time `json:"builddate,omitempty"`
 	BuildID                  string    `json:"buildid,omitempty"`
@@ -47,6 +48,10 @@ type CompAttrs struct {
 	PagerdutyBusinessURL     string    `json:"pagerdutybusinessurl,omitempty"`
 	PagerdutyURL             string    `json:"pagerdutyurl,omitempty"`
 	Repository               string    `json:"repository,omitempty"`
-	ServiceOwner             User      `json:"serviceowner,omitempty"`
+	ServiceOwner             *User     `json:"serviceowner,omitempty"`
 	SlackChannel             string    `json:"slackchannel,omitempty"`
+}
+
+func NewCompAttrs() *CompAttrs {
+	return &CompAttrs{ObjType: "CompAttrs", ServiceOwner: NewUser()}
 }

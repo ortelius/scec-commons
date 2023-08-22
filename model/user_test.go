@@ -22,17 +22,17 @@ func TestUser(t *testing.T) {
 		  "realname": "Ortelius Admin"
 	  }`)
 
-	expected := "{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}"
-	expectedCid := "bafkreifcszmgs37t4vymv5pciv6ibbksr2tkeqelc566s33arvlykn2jqi"
+	expected := "{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}"
+	expectedCid := "bafkreideqhcxzdjpd32umhcb2udxrjimupzghphjvox6ivmv6rapaosbka"
 
 	// define user object to marshal into
-	var obj User
+	obj := NewUser()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

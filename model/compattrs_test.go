@@ -45,17 +45,17 @@ func TestCompAttrs(t *testing.T) {
 		"slackchannel": "https://myproject.slack.com/444aaa"
 	  }`)
 
-	expected := "{\"builddate\":\"0001-01-01T00:00:00Z\",\"gitbranchcreatetimestamp\":\"0001-01-01T00:00:00Z\",\"gitcommittimestamp\":\"0001-01-01T00:00:00Z\",\"objtype\":\"CompAttrs\",\"serviceowner\":{\"domain\":{\"name\":\"\"},\"name\":\"\"}}"
-	expectedCid := "bafkreidyx4arxs35uewubsyhqgvuuozcacdjmkocwz3fsyysb7w3gi6jiy"
+	expected := "{\"builddate\":\"0001-01-01T00:00:00Z\",\"gitbranchcreatetimestamp\":\"0001-01-01T00:00:00Z\",\"gitcommittimestamp\":\"0001-01-01T00:00:00Z\",\"objtype\":\"CompAttrs\",\"serviceowner\":{\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"User\"}}"
+	expectedCid := "bafkreibntfjbov3ce4qzbn2wults57yesaccg545iocz27cibnuepmqp7m"
 
 	// define user object to marshal into
-	var obj CompAttrs
+	obj := NewCompAttrs()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

@@ -78,17 +78,17 @@ func TestDeployment(t *testing.T) {
 		"deploynum": 100
 	}`)
 
-	expected := "{\"application\":{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello App;v1\"},\"deploynum\": 100,\"endtime\":\"2023-04-23T10:30:30.4+02:30\",\"environment\":{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"\"},\"name\":\"Development\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}},\"objtype\":\"Deployment\",\"starttime\":\"2023-04-23T10:20:30.4+02:30\"}"
-	expectedCid := "bafkreiej5ao5aa6eaxdbhrn47qluf4oqlw2isbmmimr4q44t7atz5pmf2i"
+	expected := "{\"application\":{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersion\"},\"components\":{\"objtype\":\"Components\"},\"deploynum\": 100,\"endtime\":\"2023-04-23T10:30:30.4+02:30\",\"environment\":{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"Development\",\"objtype\":\"Environment\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}},\"objtype\":\"Deployment\",\"starttime\":\"2023-04-23T10:20:30.4+02:30\"}"
+	expectedCid := "bafkreiej2nc7qj6wvaujzdivsxldgrklf6k4ywwevhxnfdvou2ma4zgicu"
 
 	// define user object to marshal into
-	var obj Deployment
+	obj := NewDeployment()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

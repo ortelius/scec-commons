@@ -6,5 +6,10 @@ import "encoding/json"
 // Swagger defines an OpenAPI or Swagger file
 type Swagger struct {
 	Key     string          `json:"_key,omitempty"`
+	ObjType string          `json:"objtype,omitempty"`
 	Content json.RawMessage `json:"content"`
+}
+
+func NewSwagger() *Swagger {
+	return &Swagger{ObjType: "Swagger"}
 }

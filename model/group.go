@@ -3,7 +3,12 @@ package model
 
 // Group defines a group of users
 type Group struct {
-	Key    string `json:"_key,omitempty"`
-	Domain Domain `json:"domain"`
-	Name   string `json:"name"`
+	Key     string  `json:"_key,omitempty"`
+	ObjType string  `json:"objtype,omitempty"`
+	Domain  *Domain `json:"domain"`
+	Name    string  `json:"name"`
+}
+
+func NewGroup() *Group {
+	return &Group{ObjType: "Group", Domain: NewDomain()}
 }

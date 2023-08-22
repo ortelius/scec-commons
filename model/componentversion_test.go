@@ -19,17 +19,17 @@ func TestComponentVersion(t *testing.T) {
 		"predecessor_key": ""
 	  }`)
 
-	expected := "{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"ComponentVersion\"}"
-	expectedCid := "bafkreig4b2yok2qfyfti7x2j574uef4b7yfqrbwzj26rarvo7dexkczbxq"
+	expected := "{\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"ComponentVersion\"}"
+	expectedCid := "bafkreieouznpz5eey2ygrvia7ocaa44n7nsqx63ymvajvireeljuaiolom"
 
 	// define user object to marshal into
-	var obj ComponentVersion
+	obj := NewComponentVersion()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

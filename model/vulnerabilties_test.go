@@ -28,13 +28,13 @@ func TestVulnerabilities(t *testing.T) {
 	expectedCid := "bafkreihf2jx4bieq6slnzrfrg4xdmnntbdmqtbyefviuy2apt6jhzmc5w4"
 
 	// define user object to marshal into
-	var obj Vulnerabilities
+	obj := NewVulnerabilities()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

@@ -4,5 +4,10 @@ package model
 // Readme defines a readme markdown file
 type Readme struct {
 	Key     string   `json:"_key,omitempty"`
+	ObjType string   `json:"objtype,omitempty"`
 	Content []string `json:"content"`
+}
+
+func NewReadme() *Readme {
+	return &Readme{ObjType: "Readme"}
 }

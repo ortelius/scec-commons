@@ -7,8 +7,13 @@ import (
 
 // AuditRecord defines a single audit event
 type AuditRecord struct {
-	Key    string    `json:"_key,omitempty"`
-	Action string    `json:"action"`
-	User   User      `json:"User"`
-	When   time.Time `json:"when"`
+	Key     string    `json:"_key,omitempty"`
+	ObjType string    `json:"objtype,omitempty"`
+	Action  string    `json:"action"`
+	User    *User     `json:"User"`
+	When    time.Time `json:"when"`
+}
+
+func NewAuditRecord() *AuditRecord {
+	return &AuditRecord{ObjType: "AuditRecord", User: NewUser()}
 }

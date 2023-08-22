@@ -233,7 +233,6 @@ func MakeNFT(obj any) (string, string) {
 	jsonMap := make(map[string]interface{})
 	json.Unmarshal([]byte(jsonStr), &jsonMap)
 	out := flattenData(jsonMap)
-	out["objtype"] = objtype
 
 	cidmap := make(map[string]string) // output dict of grouping to json
 

@@ -20,17 +20,17 @@ func TestApplicationVersion(t *testing.T) {
 		"deployments": [121]
 	  }`)
 
-	expected := "{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersion\"}"
-	expectedCid := "bafkreidx3fghtic75jkwpla35prpkcsoikj2u467byinpe567yhuozpfyq"
+	expected := "{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersion\"}"
+	expectedCid := "bafkreidpcugtjirjddxbkove3lzac4kaaxzlftpet54546sjdzvefwjyde"
 
 	// define user object to marshal into
-	var obj ApplicationVersion
+	obj := NewApplicationVersion()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

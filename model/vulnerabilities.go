@@ -3,6 +3,11 @@ package model
 
 // Vulnerabilities defines a list of Vulnerability
 type Vulnerabilities struct {
-	Key             string          `json:"_key,omitempty"`
-	Vulnerabilities []Vulnerability `json:"vulnerabilties,omitempty"`
+	Key             string           `json:"_key,omitempty"`
+	ObjType         string           `json:"objtype,omitempty"`
+	Vulnerabilities []*Vulnerability `json:"vulnerabilties,omitempty"`
+}
+
+func NewVulnerabilities() *Vulnerabilities {
+	return &Vulnerabilities{ObjType: "Vulnerabilities"}
 }

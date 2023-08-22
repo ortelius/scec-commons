@@ -85,17 +85,17 @@ func TestDeploymentDetails(t *testing.T) {
 		}
 	}`)
 
-	expected := "{\"deployment\":{\"application\":{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello App;v1\"},\"deploynum\": 100,\"endtime\":\"2023-04-23T10:30:30.4+02:30\",\"environment\":{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"\"},\"name\":\"Development\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}},\"starttime\":\"2023-04-23T10:20:30.4+02:30\"},\"log\":[\"Finished\",\"Starting\"],\"objtype\":\"DeploymentDetails\"}"
-	expectedCid := "bafkreiaybc24p6dgqx5zgaowgimx7vbckkmjodxjviexmnwglucqhirvqa"
+	expected := "{\"deployment\":{\"application\":{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersion\"},\"components\":{\"objtype\":\"Components\"},\"deploynum\": 100,\"endtime\":\"2023-04-23T10:30:30.4+02:30\",\"environment\":{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"Development\",\"objtype\":\"Environment\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}},\"objtype\":\"Deployment\",\"starttime\":\"2023-04-23T10:20:30.4+02:30\"},\"log\":[\"Finished\",\"Starting\"],\"objtype\":\"DeploymentDetails\"}"
+	expectedCid := "bafkreibylw7hfkil4v5zyz7aeka46nx7sh7rybp3mmiy3pix455fzkakou"
 
 	// define user object to marshal into
-	var obj DeploymentDetails
+	obj := NewDeploymentDetails()
 
 	// convert json string into the user object
-	json.Unmarshal(jsonObj, &obj)
+	json.Unmarshal(jsonObj, obj)
 
 	// create all cids for the json string
-	cid, _ := database.MakeNFT(&obj)
+	cid, _ := database.MakeNFT(obj)
 	// 	fmt.Println(cid)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 

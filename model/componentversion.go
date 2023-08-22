@@ -3,10 +3,14 @@ package model
 
 // ComponentVersion defines a Version of an Component for a List View
 type ComponentVersion struct {
-	Key            string `json:"_key,omitempty"`
-	ObjType        string `default:"ComponentVersion" json:"objtype,omitempty"`
-	Domain         Domain `json:"domain"`
-	Name           string `json:"name"`
-	ParentKey      string `json:"parent_key,omitempty"`
-	PredecessorKey string `json:"predecessor_key,omitempty"`
+	Key            string  `json:"_key,omitempty"`
+	ObjType        string  `json:"objtype,omitempty"`
+	Domain         *Domain `json:"domain"`
+	Name           string  `json:"name"`
+	ParentKey      string  `json:"parent_key,omitempty"`
+	PredecessorKey string  `json:"predecessor_key,omitempty"`
+}
+
+func NewComponentVersion() *ComponentVersion {
+	return &ComponentVersion{ObjType: "ComponentVersion", Domain: NewDomain()}
 }
