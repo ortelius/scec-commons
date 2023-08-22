@@ -18,7 +18,7 @@ type Deployment struct {
 	StartTime   time.Time           `json:"starttime"`
 }
 
-// NewDepoyment is the contructor that sets the appropriate default values
+// NewDeployment is the contructor that sets the appropriate default values
 func NewDeployment() *Deployment {
 	return &Deployment{ObjType: "Deployment", Application: NewApplicationVersion(), Components: NewComponents(), Environment: NewEnvironment()}
 }
