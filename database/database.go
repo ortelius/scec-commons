@@ -231,7 +231,11 @@ func MakeNFT(obj any) (string, string) {
 
 	rootCid := ""
 	jsonMap := make(map[string]interface{})
-	json.Unmarshal([]byte(jsonStr), &jsonMap)
+	if err := json.Unmarshal([]byte(jsonStr), &jsonMap); err != nil {
+		fmt.Println(err)
+		return "", ""
+	}
+
 	out := flattenData(jsonMap)
 
 	cidmap := make(map[string]string) // output dict of grouping to json
