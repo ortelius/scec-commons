@@ -14,6 +14,7 @@ type AuditRecord struct {
 	When    time.Time `json:"when"`
 }
 
+// NewAuditRecord is the contructor that sets the appropriate default values
 func NewAuditRecord() *AuditRecord {
 	return &AuditRecord{ObjType: "AuditRecord", User: NewUser()}
 }

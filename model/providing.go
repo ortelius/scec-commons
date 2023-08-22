@@ -8,6 +8,7 @@ type Providing struct {
 	Provides []string `json:"provides"`
 }
 
+// NewProviding is the contructor that sets the appropriate default values
 func NewProviding() *Providing {
 	return &Providing{ObjType: "Providing"}
 }

@@ -52,6 +52,7 @@ type CompAttrs struct {
 	SlackChannel             string    `json:"slackchannel,omitempty"`
 }
 
+// NewCompAttrs is the contructor that sets the appropriate default values
 func NewCompAttrs() *CompAttrs {
 	return &CompAttrs{ObjType: "CompAttrs", ServiceOwner: NewUser()}
 }

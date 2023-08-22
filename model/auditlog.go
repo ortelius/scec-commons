@@ -8,6 +8,7 @@ type AuditLog struct {
 	AuditLog []*AuditRecord `json:"auditlog,omitempty"`
 }
 
+// NewAuditLog is the contructor that sets the appropriate default values
 func NewAuditLog() *AuditLog {
 	return &AuditLog{ObjType: "AuditLog"}
 }

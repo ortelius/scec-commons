@@ -20,6 +20,7 @@ type ApplicationVersionDetails struct {
 	PredecessorKey string      `json:"predecessor_key,omitempty"`
 }
 
+// NewApplicationVersionDetails is the contructor that sets the appropriate default values
 func NewApplicationVersionDetails() *ApplicationVersionDetails {
 	return &ApplicationVersionDetails{ObjType: "ApplicationVersionDetails", AuditLog: NewAuditLog(), Components: NewComponents(), Creator: NewUser(), Domain: NewDomain(), Owner: NewUser()}
 }

@@ -12,6 +12,7 @@ type User struct {
 	Realname string  `json:"realname,omitempty"`
 }
 
+// NewUser is the contructor that sets the appropriate default values
 func NewUser() *User {
 	return &User{ObjType: "User", Domain: NewDomain()}
 }

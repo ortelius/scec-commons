@@ -9,6 +9,7 @@ type UsersForGroup struct {
 	UserKeys []string `json:"users"`
 }
 
+// NewUsersForGroup is the contructor that sets the appropriate default values
 func NewUsersForGroup() *UsersForGroup {
 	return &UsersForGroup{ObjType: "UsersForGroup"}
 }

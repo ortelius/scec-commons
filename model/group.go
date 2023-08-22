@@ -9,6 +9,7 @@ type Group struct {
 	Name    string  `json:"name"`
 }
 
+// NewGroup is the contructor that sets the appropriate default values
 func NewGroup() *Group {
 	return &Group{ObjType: "Group", Domain: NewDomain()}
 }

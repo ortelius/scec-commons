@@ -28,6 +28,7 @@ type ComponentVersionDetails struct {
 	Vulnerabilities *Vulnerabilities `json:"vulnerabilties,omitempty"`
 }
 
+// NewComponentVersionDetails is the contructor that sets the appropriate default values
 func NewComponentVersionDetails() *ComponentVersionDetails {
 	return &ComponentVersionDetails{
 		ObjType:         "ComponentVersionDetails",

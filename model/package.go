@@ -12,6 +12,7 @@ type Package struct {
 	Version    string `json:"version"`
 }
 
+// NewPackage is the contructor that sets the appropriate default values
 func NewPackage() *Package {
 	return &Package{ObjType: "Package"}
 }

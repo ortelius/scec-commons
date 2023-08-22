@@ -11,6 +11,7 @@ type ComponentVersion struct {
 	PredecessorKey string  `json:"predecessor_key,omitempty"`
 }
 
+// NewComponentVersion is the contructor that sets the appropriate default values
 func NewComponentVersion() *ComponentVersion {
 	return &ComponentVersion{ObjType: "ComponentVersion", Domain: NewDomain()}
 }

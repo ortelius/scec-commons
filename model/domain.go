@@ -8,6 +8,7 @@ type Domain struct {
 	Name    string `json:"name"`
 }
 
+// NewDomain is the contructor that sets the appropriate default values
 func NewDomain() *Domain {
 	return &Domain{ObjType: "Domain"}
 }

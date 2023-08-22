@@ -8,6 +8,7 @@ type Components struct {
 	Components []*ComponentVersion `json:"components,omitempty"`
 }
 
+// NewComponents is the contructor that sets the appropriate default values
 func NewComponents() *Components {
 	return &Components{ObjType: "Components"}
 }

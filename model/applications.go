@@ -8,6 +8,7 @@ type Applications struct {
 	Applications []*ApplicationVersion `json:"applications,omitempty"`
 }
 
+// NewApplications is the contructor that sets the appropriate default values
 func NewApplications() *Applications {
 	return &Applications{ObjType: "Applications"}
 }

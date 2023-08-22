@@ -10,6 +10,7 @@ type Swagger struct {
 	Content json.RawMessage `json:"content"`
 }
 
+// NewSwagger is the contructor that sets the appropriate default values
 func NewSwagger() *Swagger {
 	return &Swagger{ObjType: "Swagger"}
 }

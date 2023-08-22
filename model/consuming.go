@@ -8,6 +8,7 @@ type Consuming struct {
 	Comsumes []string `json:"consumes"`
 }
 
+// NewConsuming is the contructor that sets the appropriate default values
 func NewConsuming() *Consuming {
 	return &Consuming{ObjType: "Consuming"}
 }

@@ -12,6 +12,7 @@ type ApplicationVersion struct {
 	PredecessorKey string  `json:"predecessor_key,omitempty"`
 }
 
+// NewApplicationVersion is the contructor that sets the appropriate default values
 func NewApplicationVersion() *ApplicationVersion {
 	return &ApplicationVersion{ObjType: "ApplicationVersion", Domain: NewDomain()}
 }

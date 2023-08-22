@@ -8,6 +8,7 @@ type License struct {
 	Content []string `json:"content"`
 }
 
+// NewLicense is the contructor that sets the appropriate default values
 func NewLicense() *License {
 	return &License{ObjType: "License"}
 }

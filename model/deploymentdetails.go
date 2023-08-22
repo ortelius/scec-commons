@@ -9,6 +9,7 @@ type DeploymentDetails struct {
 	Log        []string    `json:"log,omitempty"`
 }
 
+// NewDeploymentDetails is the contructor that sets the appropriate default values
 func NewDeploymentDetails() *DeploymentDetails {
 	return &DeploymentDetails{ObjType: "DeploymentDetails", Deployment: NewDeployment()}
 }

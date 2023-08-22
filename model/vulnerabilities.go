@@ -8,6 +8,7 @@ type Vulnerabilities struct {
 	Vulnerabilities []*Vulnerability `json:"vulnerabilties,omitempty"`
 }
 
+// NewVulnerabilities is the contructor that sets the appropriate default values
 func NewVulnerabilities() *Vulnerabilities {
 	return &Vulnerabilities{ObjType: "Vulnerabilities"}
 }

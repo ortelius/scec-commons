@@ -8,6 +8,7 @@ type Packages struct {
 	Packages []*Package `json:"packages,omitempty"`
 }
 
+// NewPackages is the contructor that sets the appropriate default values
 func NewPackages() *Packages {
 	return &Packages{ObjType: "Packages"}
 }

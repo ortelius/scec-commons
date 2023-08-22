@@ -8,6 +8,7 @@ type Readme struct {
 	Content []string `json:"content"`
 }
 
+// NewReadme is the contructor that sets the appropriate default values
 func NewReadme() *Readme {
 	return &Readme{ObjType: "Readme"}
 }

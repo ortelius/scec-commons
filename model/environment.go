@@ -16,6 +16,7 @@ type Environment struct {
 	Owner   *User     `json:"owner"`
 }
 
+// NewEnvironment is the contructor that sets the appropriate default values
 func NewEnvironment() *Environment {
 	return &Environment{ObjType: "Environment", Creator: NewUser(), Domain: NewDomain(), Owner: NewUser()}
 }
