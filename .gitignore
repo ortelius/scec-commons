@@ -138,6 +138,9 @@ dmypy.json
 # MegaLinter
 megalinter-reports/
 
+# nft data
+model/nfts
+
 #Go packages
 .gobuild
 
