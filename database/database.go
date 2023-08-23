@@ -1,16 +1,16 @@
 // Package database - Handles all interaction with ArangoDB and Long Term Storage (LTS).
-// Contains utility functions for marshalling/unmaeshalling json to cid/nfts
+// Contains utility functions for marshalling/unmarshalling json to cid/nfts
 package database
 
 import (
 	"context"
+	"io"
 	"os"
 	"reflect"
 	"regexp"
 
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"sort"
 	"strconv"
 	"strings"
@@ -180,7 +180,7 @@ func getCid(cid string) (string, bool) {
 
 	if _, err := os.Stat(filename); err == nil {
 		cidFile, _ := os.Open(filename)
-		byteValue, _ := ioutil.ReadAll(cidFile)
+		byteValue, _ := io.ReadAll(cidFile)
 		cidFile.Close()
 
 		return string(byteValue), true
@@ -327,7 +327,9 @@ func MakeNFT(obj any) (string, string) {
 			if err := os.Mkdir("nfts", 0755); err != nil && !os.IsExist(err) {
 				fmt.Println(err)
 			}
-			os.WriteFile("nfts/"+cid+".nft", []byte(jsonStr), 0644)
+			if err := os.WriteFile("nfts/"+cid+".nft", []byte(jsonStr), 0644); err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 
