@@ -359,11 +359,11 @@ func MakeJSON(cid string) (string, bool) {
 
 				if jsonPart, found := getCid(k); found {
 					// need regex to handle replace in one go
-					jsonStr = strings.Replace(jsonStr, "\""+k+"\"", jsonPart, -1)
-					jsonStr = strings.Replace(jsonStr, "["+k+"]", "["+jsonPart+"]", -1)
-					jsonStr = strings.Replace(jsonStr, "["+k+",", "["+jsonPart+",", -1)
-					jsonStr = strings.Replace(jsonStr, ","+k+",", ","+jsonPart+",", -1)
-					jsonStr = strings.Replace(jsonStr, ","+k+"]", ","+jsonPart+"]", -1)
+					jsonStr = strings.ReplaceAll(jsonStr, "\""+k+"\"", jsonPart)
+					jsonStr = strings.ReplaceAll(jsonStr, "["+k+"]", "["+jsonPart+"]")
+					jsonStr = strings.ReplaceAll(jsonStr, "["+k+",", "["+jsonPart+",")
+					jsonStr = strings.ReplaceAll(jsonStr, ","+k+",", ","+jsonPart+",")
+					jsonStr = strings.ReplaceAll(jsonStr, ","+k+"]", ","+jsonPart+"]")
 					replaceCnt++
 				}
 			}
