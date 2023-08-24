@@ -152,6 +152,7 @@ func FetchFromLTS(key string) (string, map[string]string) {
 	return key, cid2json
 }
 
+// flattenData recursively flattens a JSON string using periods to separate the nested keys. Arrays are represented by 4 digit keys
 func flattenData(y interface{}) map[string]interface{} {
 	out := make(map[string]interface{})
 
@@ -175,6 +176,7 @@ func flattenData(y interface{}) map[string]interface{} {
 	return out
 }
 
+// getCid takes the cid and retrieves the corresponding JSON str from LTS
 func getCid(cid string) (string, bool) {
 
 	filename := "nfts/" + cid + ".nft"
@@ -189,6 +191,7 @@ func getCid(cid string) (string, bool) {
 	return "", false
 }
 
+// genCid takes a JSON string and calculates the corresponding immutable IPFS CID
 func genCid(jsonStr string) string {
 	var pref = cid.Prefix{
 		Version:  1,
@@ -206,8 +209,36 @@ func genCid(jsonStr string) string {
 	return _cid.String()
 }
 
+// splitJSON will split the json string on the bellow characters in order to just have keys and values
 func splitJSON(r rune) bool {
 	return r == ':' || r == ',' || r == '"' || r == '{' || r == '}' || r == '[' || r == ']'
+}
+
+// addKey2Obj will add Key=cid for nested objects
+func addKey2Obj(obj any, group string, cid string) {
+	fname := cases.Title(language.Und, cases.NoLower).String(group) // change group to match struct field name
+	f := reflect.ValueOf(obj).Elem().FieldByName(fname)             // find the field name in the object
+	if f.IsValid() && f.CanSet() &&                                 // found the field in the object and make sure we can update the field value
+		reflect.TypeOf(f.Interface()).Kind() != reflect.Array && reflect.TypeOf(f.Interface()).Kind() != reflect.Slice { // make sure its not an array/slice
+		fkey := reflect.ValueOf(f.Interface()).Elem().FieldByName("Key") // see of the object we found contains the Key field
+		if fkey.IsValid() && fkey.CanSet() {                             // found the field in the object and make sure we can update the field value
+			fkey.SetString(cid) // set Key=cid in the object
+		}
+	} else if strings.Count(fname, ".") > 0 { // make sure we are working with a nested array/slice
+		parts := strings.Split(fname, ".")           // split the name so we can get the object name and array index
+		key := parts[len(parts)-2]                   // get the object field name
+		idx := parts[len(parts)-1]                   // get the index of the array we are working with
+		if i, err := strconv.Atoi(idx); err == nil { // make sure its a valid array index
+			f := reflect.ValueOf(obj).Elem().FieldByName(key) // get the field for the array/slice
+			if f.IsValid() && f.CanSet() {                    // found the field in the object and make sure we can update the field value
+				fidx := f.Index(i).Interface()                          // get the object using the index from the array/slice
+				fkey := reflect.ValueOf(fidx).Elem().FieldByName("Key") // see of the object we found contains the Key field
+				if fkey.IsValid() && fkey.CanSet() {                    // found the field in the object and make sure we can update the field value
+					fkey.SetString(cid) // set Key=cid in the object
+				}
+			}
+		}
+	}
 }
 
 // MakeNFT normalizes the object into the corresponding cids=json string handling nested objects
@@ -322,30 +353,7 @@ func MakeNFT(obj any) (string, string) {
 			if group != "root" {
 				out[group] = cid // group = nested struct path
 
-				// Add Key=cid for nested objects
-				fname := cases.Title(language.Und, cases.NoLower).String(group) // change group to match struct field name
-				f := reflect.ValueOf(obj).Elem().FieldByName(fname)             // find the field name in the object
-				if f.IsValid() && f.CanSet() &&                                 // found the field in the object and make sure we can update the field value
-					reflect.TypeOf(f.Interface()).Kind() != reflect.Array && reflect.TypeOf(f.Interface()).Kind() != reflect.Slice { // make sure its not an array/slice
-					fkey := reflect.ValueOf(f.Interface()).Elem().FieldByName("Key") // see of the object we found contains the Key field
-					if fkey.IsValid() && fkey.CanSet() {                             // found the field in the object and make sure we can update the field value
-						fkey.SetString(cid) // set Key=cid in the object
-					}
-				} else if strings.Count(fname, ".") > 0 { // make sure we are working with a nested array/slice
-					parts := strings.Split(fname, ".")           // split the name so we can get the object name and array index
-					key := parts[len(parts)-2]                   // get the object field name
-					idx := parts[len(parts)-1]                   // get the index of the array we are working with
-					if i, err := strconv.Atoi(idx); err == nil { // make sure its a valid array index
-						f := reflect.ValueOf(obj).Elem().FieldByName(key) // get the field for the array/slice
-						if f.IsValid() && f.CanSet() {                    // found the field in the object and make sure we can update the field value
-							fidx := f.Index(i).Interface()                          // get the object using the index from the array/slice
-							fkey := reflect.ValueOf(fidx).Elem().FieldByName("Key") // see of the object we found contains the Key field
-							if fkey.IsValid() && fkey.CanSet() {                    // found the field in the object and make sure we can update the field value
-								fkey.SetString(cid) // set Key=cid in the object
-							}
-						}
-					}
-				}
+				addKey2Obj(obj, group, cid) // Add Key=cid for nested objects
 			} else {
 				rootCid = cid
 			}
