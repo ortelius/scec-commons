@@ -11,21 +11,21 @@ import (
 func TestVulnerabilities(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Vulnerabilities",
 		"vulnerabilties": [{
-
+			    "objtype": "Vulnerabilities",
 				"name": "CVE-1823"
 			},
 			{
-
+				"objtype": "Vulnerabilities",
 				"name": "CVE-1824"
 			}
 		]
 
 	}`)
 
-	expected := "{\"objtype\":\"Vulnerabilities\",\"vulnerabilties\":[{\"name\":\"CVE-1823\"},{\"name\":\"CVE-1824\"}]}"
-	expectedCid := "bafkreihf2jx4bieq6slnzrfrg4xdmnntbdmqtbyefviuy2apt6jhzmc5w4"
+	expected := "{\"objtype\":\"Vulnerabilities\",\"vulnerabilties\":[{\"name\":\"CVE-1824\",\"objtype\":\"Vulnerabilities\"},{\"name\":\"CVE-1823\",\"objtype\":\"Vulnerabilities\"}]}"
+	expectedCid := "bafkreihwylfo22ratdjgkstonuhe7e2dfnxzofiv2ooyfdwbyaoqwipilq"
 
 	// define user object to marshal into
 	obj := NewVulnerabilities()

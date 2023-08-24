@@ -11,7 +11,7 @@ import (
 func TestUsersForGroup(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "UsersForGroup",
 		"group": "administrators",
 		"users": [ "testadmin", "admin" ]
 	  }`)

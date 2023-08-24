@@ -11,7 +11,7 @@ import (
 func TestLicense(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "License",
 		"content": ["# Apache 2", "## Summary"]
 	  }`)
 

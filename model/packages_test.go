@@ -11,9 +11,9 @@ import (
 func TestPackages(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Packages",
 		"packages": [{
-
+				"objtype": "Package",
 				"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 				"name": "libc-bin",
 				"version": "2.19.18+deb8u7",
@@ -21,7 +21,7 @@ func TestPackages(t *testing.T) {
 				"license": "GP-2.0"
 			},
 			{
-
+				"objtype": "Package",
 				"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 				"name": "libcpp-bin",
 				"version": "2.19.18+deb8u7",
@@ -31,8 +31,8 @@ func TestPackages(t *testing.T) {
 		]
 	}`)
 
-	expected := "{\"objtype\":\"Packages\",\"packages\":[{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"},{\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}]}"
-	expectedCid := "bafkreifuhcggcesx3vgombuepe6gi7juombr2sqzi2wvw4ko63xl7xeioa"
+	expected := "{\"objtype\":\"Packages\",\"packages\":[{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"},{\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}]}"
+	expectedCid := "bafkreicrzo2siragfgs2z6a7ptsua4uzl5qwsi6ulfr5rszyafutmkf4hm"
 
 	// define user object to marshal into
 	obj := NewPackages()

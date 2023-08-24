@@ -12,8 +12,10 @@ func TestApplications(t *testing.T) {
 
 	jsonObj := []byte(`{
 		"applications": [{
+			"objtype": "Applications",
 			"name": "Hello App;v1",
 			"domain": {
+			  "objtype": "Domain",
 			  "name": "GLOBAL.My Project"
 			},
 			"parent_key": "",
@@ -23,8 +25,8 @@ func TestApplications(t *testing.T) {
 		]
 	}`)
 
-	expected := "{\"applications\":[{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello App;v1\"}],\"objtype\":\"Applications\"}"
-	expectedCid := "bafkreia37rx5tis4rucgopt4wekpxtquzmitxmzhj7s6aa7th3mayw7xly"
+	expected := "{\"applications\":[{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello App;v1\",\"objtype\":\"Applications\"}],\"objtype\":\"Applications\"}"
+	expectedCid := "bafkreiamsg6kb47toamrydimhno2orwireuqpjeb6uvn5ssnqch4feaol4"
 
 	// define user object to marshal into
 	obj := NewApplications()
@@ -34,7 +36,7 @@ func TestApplications(t *testing.T) {
 
 	// create all cids for the json string
 	cid, _ := database.MakeNFT(obj)
-	// 	fmt.Println(cid)
+	// fmt.Println(dbStr)
 	assert.Equal(t, expectedCid, cid, "check persisted cid with test cid")
 
 	// convert all the cids back to json string

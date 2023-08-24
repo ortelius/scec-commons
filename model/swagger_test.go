@@ -11,7 +11,7 @@ import (
 func TestSwagger(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Swagger",
 		"content": {"openapi":"3.0.2"}
 	  }`)
 

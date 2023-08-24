@@ -11,7 +11,7 @@ import (
 func TestReadme(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Readme",
 		"content": ["# README", "## Sample"]
 	  }`)
 

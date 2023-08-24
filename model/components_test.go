@@ -11,22 +11,22 @@ import (
 func TestComponents(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Components",
 		"components": [{
-
+				"objtype": "Component",
 				"name": "Hello World;v1.0.0",
 				"domain": {
-
+					"objtype": "Domain",
 					"name": "GLOBAL.My Project"
 				},
 				"parent_key": "",
 				"predecessor_key": ""
 			},
 			{
-
+				"objtype": "Component",
 				"name": "FooBar;v1.0.0",
 				"domain": {
-
+					"objtype": "Domain",
 					"name": "GLOBAL.My Project"
 				},
 				"parent_key": "",
@@ -35,8 +35,8 @@ func TestComponents(t *testing.T) {
 		]
 	}`)
 
-	expected := "{\"components\":[{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"Hello World;v1.0.0\"},{\"domain\":{\"name\":\"GLOBAL.My Project\"},\"name\":\"FooBar;v1.0.0\"}],\"objtype\":\"Components\"}"
-	expectedCid := "bafkreif6vuydubg7cam3imzikxw5lh6l6uu7s5hxkvbzda2baculds7m6q"
+	expected := "{\"components\":[{\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"Component\"},{\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"FooBar;v1.0.0\",\"objtype\":\"Component\"}],\"objtype\":\"Components\"}"
+	expectedCid := "bafkreifkd3fhlybdw66ifzfoi2u3u4niafsu44ipy2wf4ve5wu3qya7fmy"
 
 	// define user object to marshal into
 	obj := NewComponents()

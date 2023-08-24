@@ -11,10 +11,10 @@ import (
 func TestGroup(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Group",
 		"name": "Administrators",
 		"domain": {
-
+		  "objtype": "Domain",
 		  "name": "GLOBAL"
 		}
 	  }`)

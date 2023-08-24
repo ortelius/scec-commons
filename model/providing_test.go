@@ -11,7 +11,7 @@ import (
 func TestProviding(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Providing",
 		"provides": ["/user"]
 	}`)
 

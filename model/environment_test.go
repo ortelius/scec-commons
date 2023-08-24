@@ -11,17 +11,17 @@ import (
 func TestEnvironment(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Environemnt",
 		"name": "Development",
 		"domain": {
-
+			"objtype": "Domain",
 			"name": "GLOBAL.My Project"
 		},
 		"owner": {
-
+		  "objtype": "User",
 		  "name": "admin",
 		  "domain": {
-
+			"objtype": "Domain",
 			"name": "GLOBAL"
 		  },
 		  "email": "admin@ortelius.io",
@@ -29,10 +29,10 @@ func TestEnvironment(t *testing.T) {
 		  "realname": "Ortelius Admin"
 		},
 		"creator": {
-
+		  "objtype": "User",
 		  "name": "admin",
 		  "domain": {
-
+			"objtype": "Domain",
 			"name": "GLOBAL"
 		  },
 		  "email": "admin@ortelius.io",
@@ -42,8 +42,8 @@ func TestEnvironment(t *testing.T) {
 		"created": "2023-04-23T10:20:30.400+02:30"
 	  }`)
 
-	expected := "{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Development\",\"objtype\":\"Environment\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}}"
-	expectedCid := "bafkreieip6llse7gsxc23oppvblv6cvxlwnpd63ilvzmpd6xe5vff425uu"
+	expected := "{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Development\",\"objtype\":\"Environemnt\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}}"
+	expectedCid := "bafkreidgxym6px2kghltpqk7ohj3e3h7ne7obcyub3enqjobsdajy2swim"
 
 	// define user object to marshal into
 	obj := NewEnvironment()

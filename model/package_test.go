@@ -11,7 +11,7 @@ import (
 func TestPackage(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Package",
 		"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 		"name": "libc-bin",
 		"version": "2.19.18+deb8u7",

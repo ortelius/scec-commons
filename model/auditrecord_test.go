@@ -11,12 +11,12 @@ import (
 func TestAuditRecord(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "AuditRecord",
 		"action": "Created",
 		"user": {
-
+		  "objtype": "User",
 		  "domain": {
-
+			"objtype": "Domain",
 			"name": "GLOBAL"
 		  },
 		  "email": "admin@ortelius.io",

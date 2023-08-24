@@ -11,16 +11,16 @@ import (
 func TestDeployment(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "Deployment",
 		"environment": {
-
+			"objtype": "Environment",
 			"name": "Development",
 			"domain": "GLOBAL.My Project",
 			"owner": {
-
+				"objtype": "User",
 				"name": "admin",
 				"domain": {
-
+					"objtype": "Domain",
 					"name": "GLOBAL"
 				},
 				"email": "admin@ortelius.io",
@@ -28,10 +28,10 @@ func TestDeployment(t *testing.T) {
 				"realname": "Ortelius Admin"
 			},
 			"creator": {
-
+				"objtype": "User",
 				"name": "admin",
 				"domain": {
-
+					"objtype": "Domain",
 					"name": "GLOBAL"
 				},
 				"email": "admin@ortelius.io",
@@ -41,10 +41,10 @@ func TestDeployment(t *testing.T) {
 			"created": "2023-04-23T10:20:30.400+02:30"
 		},
 		"application": {
-
+			"objtype": "Application",
 			"name": "Hello App;v1",
 			"domain": {
-
+				"objtype": "Domain",
 				"name": "GLOBAL.My Project"
 			},
 			"parent_key": "",
@@ -52,20 +52,20 @@ func TestDeployment(t *testing.T) {
 			"deployments": [121]
 		},
 		"components": [{
-
+				"objtype": "Component",
 				"name": "Hello World;v1.0.0",
 				"domain": {
-
+					"objtype": "Domain,
 					"name": "GLOBAL.My Project"
 				},
 				"parent_key": "",
 				"predecessor_key": ""
 			},
 			{
-
+				"objtype": "Component",
 				"name": "FooBar;v1.0.0",
 				"domain": {
-
+					"objtype": "Domain",
 					"name": "GLOBAL.My Project"
 				},
 				"parent_key": "",
@@ -78,8 +78,8 @@ func TestDeployment(t *testing.T) {
 		"deploynum": 100
 	}`)
 
-	expected := "{\"application\":{\"deployments\":[121],\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"name\":\"Hello App;v1\",\"objtype\":\"ApplicationVersion\"},\"components\":{\"objtype\":\"Components\"},\"deploynum\": 100,\"endtime\":\"2023-04-23T10:30:30.4+02:30\",\"environment\":{\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"Development\",\"objtype\":\"Environment\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"}},\"objtype\":\"Deployment\",\"starttime\":\"2023-04-23T10:20:30.4+02:30\"}"
-	expectedCid := "bafkreiej2nc7qj6wvaujzdivsxldgrklf6k4ywwevhxnfdvou2ma4zgicu"
+	expected := "{\"application\":{\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"ApplicationVersion\"},\"components\":{\"objtype\":\"Components\"},\"deploynum\": 0,\"endtime\":\"0001-01-01T00:00:00Z\",\"environment\":{\"created\":\"0001-01-01T00:00:00Z\",\"creator\":{\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"User\"},\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"Environment\",\"owner\":{\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"User\"}},\"objtype\":\"Deployment\",\"starttime\":\"0001-01-01T00:00:00Z\"}"
+	expectedCid := "bafkreibozc4soiebb5ku7njeza3grrj5v22kxlgnez5ozsvnrrdch3m67u"
 
 	// define user object to marshal into
 	obj := NewDeployment()

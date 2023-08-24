@@ -164,7 +164,7 @@ func flattenData(y interface{}) map[string]interface{} {
 			}
 		case []interface{}:
 			for i, a := range v {
-				flatten(a, name+fmt.Sprintf("%03d.", i))
+				flatten(a, name+fmt.Sprintf("%04d.", i))
 			}
 		default:
 			out[name[:len(name)-1]] = x
@@ -221,12 +221,12 @@ func MakeNFT(obj any) (string, string) {
 		jsonStr = string(byteValue)
 	}
 
-	objtype := reflect.TypeOf(obj).String()
+	/* 	objtype := reflect.TypeOf(obj).String()
 
-	if strings.Count(objtype, ".") > 0 {
-		parts := strings.Split(objtype, ".")
-		objtype = parts[len(parts)-1]
-	}
+	   	if strings.Count(objtype, ".") > 0 {
+	   		parts := strings.Split(objtype, ".")
+	   		objtype = parts[len(parts)-1]
+	   	} */
 	repl := regexp.MustCompile(`"_key":\s*".*","`)
 	repl.ReplaceAllString(jsonStr, "")
 
@@ -320,26 +320,28 @@ func MakeNFT(obj any) (string, string) {
 			cidmap[cid] = jsonStr
 
 			if group != "root" {
-				out[group] = cid
+				out[group] = cid // group = nested struct path
 
-				fname := cases.Title(language.Und, cases.NoLower).String(group)
-				f := reflect.ValueOf(obj).Elem().FieldByName(fname)
-				if f.IsValid() && f.CanSet() && reflect.TypeOf(f.Interface()).Kind() != reflect.Array && reflect.TypeOf(f.Interface()).Kind() != reflect.Slice {
-					fkey := reflect.ValueOf(f.Interface()).Elem().FieldByName("Key")
-					if fkey.IsValid() && fkey.CanSet() {
-						fkey.SetString(cid)
+				// Add Key=cid for nested objects
+				fname := cases.Title(language.Und, cases.NoLower).String(group) // change group to match struct field name
+				f := reflect.ValueOf(obj).Elem().FieldByName(fname)             // find the field name in the object
+				if f.IsValid() && f.CanSet() &&                                 // found the field in the object and make sure we can update the field value
+					reflect.TypeOf(f.Interface()).Kind() != reflect.Array && reflect.TypeOf(f.Interface()).Kind() != reflect.Slice { // make sure its not an array/slice
+					fkey := reflect.ValueOf(f.Interface()).Elem().FieldByName("Key") // see of the object we found contains the Key field
+					if fkey.IsValid() && fkey.CanSet() {                             // found the field in the object and make sure we can update the field value
+						fkey.SetString(cid) // set Key=cid in the object
 					}
-				} else if strings.Count(fname, ".") > 0 { // check if this is an array of objects
-					parts := strings.Split(fname, ".")
-					key := parts[len(parts)-2]
-					idx := parts[len(parts)-1]
-					if i, err := strconv.Atoi(idx); err == nil {
-						f := reflect.ValueOf(obj).Elem().FieldByName(key)
-						if f.IsValid() && f.CanSet() {
-							fidx := f.Index(i).Interface()
-							fkey := reflect.ValueOf(fidx).Elem().FieldByName("Key")
-							if fkey.IsValid() && fkey.CanSet() {
-								fkey.SetString(cid)
+				} else if strings.Count(fname, ".") > 0 { // make sure we are working with a nested array/slice
+					parts := strings.Split(fname, ".")           // split the name so we can get the object name and array index
+					key := parts[len(parts)-2]                   // get the object field name
+					idx := parts[len(parts)-1]                   // get the index of the array we are working with
+					if i, err := strconv.Atoi(idx); err == nil { // make sure its a valid array index
+						f := reflect.ValueOf(obj).Elem().FieldByName(key) // get the field for the array/slice
+						if f.IsValid() && f.CanSet() {                    // found the field in the object and make sure we can update the field value
+							fidx := f.Index(i).Interface()                          // get the object using the index from the array/slice
+							fkey := reflect.ValueOf(fidx).Elem().FieldByName("Key") // see of the object we found contains the Key field
+							if fkey.IsValid() && fkey.CanSet() {                    // found the field in the object and make sure we can update the field value
+								fkey.SetString(cid) // set Key=cid in the object
 							}
 						}
 					}
@@ -362,7 +364,7 @@ func MakeNFT(obj any) (string, string) {
 		f.SetString(rootCid)
 	}
 
-	dbStr := fmt.Sprintf("{\"_key\":\"%s\",\"objtype\":\"%s\",%s", rootCid, objtype, jsonStr[1:])
+	dbStr := fmt.Sprintf("{\"_key\":\"%s\",%s", rootCid, jsonStr[1:])
 	return rootCid, dbStr
 }
 

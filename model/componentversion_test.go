@@ -11,8 +11,10 @@ import (
 func TestComponentVersion(t *testing.T) {
 
 	jsonObj := []byte(`{
+		"objtype": "ComponentVersion",
 		"name": "Hello World;v1.0.0",
 		"domain": {
+			"objtype": "Domain",
 			"name": "GLOBAL.My Project"
 		},
 		"parent_key": "",

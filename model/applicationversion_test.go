@@ -12,7 +12,9 @@ func TestApplicationVersion(t *testing.T) {
 
 	jsonObj := []byte(`{
 		"name": "Hello App;v1",
+		"objtype": "ApplicationVersion",
 		"domain": {
+		  "objtype": "Domain",
 		  "name": "GLOBAL.My Project"
 		},
 		"parent_key": "",

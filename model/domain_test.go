@@ -11,6 +11,7 @@ import (
 func TestDomain(t *testing.T) {
 
 	jsonObj := []byte(`{
+		"objtype": "Domain",
 		"name": "GLOBAL"
 	  }`)
 

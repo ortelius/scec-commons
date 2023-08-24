@@ -11,10 +11,10 @@ import (
 func TestUser(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		  "objtype": "User",
 		  "name": "admin",
 		  "domain": {
-
+			"objtype": "Domain",
 			"name": "GLOBAL"
 		  },
 		  "email": "admin@ortelius.io",

@@ -11,7 +11,7 @@ import (
 func TestCompAttrs(t *testing.T) {
 
 	jsonObj := []byte(`{
-
+		"objtype": "CompAttrs",
 		"builddate": "Mon Jan 31 16:18:26 2022",
 		"build_key": "178",
 		"buildurl": "https://circleci.com/gh/ortelius/store-cartservice/178",
@@ -32,10 +32,10 @@ func TestCompAttrs(t *testing.T) {
 		"pagerdutybusinessurl": "https://pagerduty.com/business/ms-chartservice",
 		"pagerdutyurl": "https://pagerduty.com/business/ms-chartservice",
 		"serviceowner": {
-
+		  "objtype": "User",
 		  "name": "admin",
 		  "domain": {
-
+			"objtype": "Domain",
 			"name": "GLOBAL"
 		  },
 		  "email": "admin@ortelius.io",
