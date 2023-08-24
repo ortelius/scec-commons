@@ -17,10 +17,11 @@ import (
 
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
+	cid "github.com/ipfs/go-cid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-
-	cid "github.com/ipfs/go-cid"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	mc "github.com/multiformats/go-multicodec"
 
@@ -320,6 +321,29 @@ func MakeNFT(obj any) (string, string) {
 
 			if group != "root" {
 				out[group] = cid
+
+				fname := cases.Title(language.Und, cases.NoLower).String(group)
+				f := reflect.ValueOf(obj).Elem().FieldByName(fname)
+				if f.IsValid() && f.CanSet() && reflect.TypeOf(f.Interface()).Kind() != reflect.Array && reflect.TypeOf(f.Interface()).Kind() != reflect.Slice {
+					fkey := reflect.ValueOf(f.Interface()).Elem().FieldByName("Key")
+					if fkey.IsValid() && fkey.CanSet() {
+						fkey.SetString(cid)
+					}
+				} else if strings.Count(fname, ".") > 0 { // check if this is an array of objects
+					parts := strings.Split(fname, ".")
+					key := parts[len(parts)-2]
+					idx := parts[len(parts)-1]
+					if i, err := strconv.Atoi(idx); err == nil {
+						f := reflect.ValueOf(obj).Elem().FieldByName(key)
+						if f.IsValid() && f.CanSet() {
+							fidx := f.Index(i).Interface()
+							fkey := reflect.ValueOf(fidx).Elem().FieldByName("Key")
+							if fkey.IsValid() && fkey.CanSet() {
+								fkey.SetString(cid)
+							}
+						}
+					}
+				}
 			} else {
 				rootCid = cid
 			}
