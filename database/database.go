@@ -3,6 +3,7 @@
 package database
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"os"
@@ -18,6 +19,7 @@ import (
 	driver "github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
 	cid "github.com/ipfs/go-cid"
+	"github.com/sanity-io/litter"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"golang.org/x/text/cases"
@@ -411,4 +413,31 @@ func MakeJSON(cid string) (string, bool) {
 	}
 
 	return jsonStr, exists
+}
+
+func EmptyJson(obj any) string {
+	structStr := litter.Sdump(obj)
+	r := regexp.MustCompile("&.*{")
+	structStr = r.ReplaceAllString(structStr, "{")
+
+	r = regexp.MustCompile("time.Time{}")
+	structStr = r.ReplaceAllString(structStr, "\"\"")
+
+	r = regexp.MustCompile("nil")
+	structStr = r.ReplaceAllString(structStr, "\"\"")
+
+	r = regexp.MustCompile(`([^\s]+):`)
+	structStr = r.ReplaceAllString(structStr, "\"$1\":")
+
+	r = regexp.MustCompile(`,\n\s*}`)
+	structStr = r.ReplaceAllString(structStr, "\n}")
+
+	r = regexp.MustCompile(`"Key"`)
+	structStr = r.ReplaceAllString(structStr, "\"_key\"")
+
+	structStr = strings.ToLower(structStr)
+
+	dst := &bytes.Buffer{}
+	json.Compact(dst, []byte(structStr))
+	return dst.String()
 }
