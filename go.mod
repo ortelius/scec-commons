@@ -19,14 +19,8 @@ require (
 )
 
 require (
-	github.com/gookit/color v1.5.4 // indirect
-	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-)
-
-require (
 	github.com/arangodb/go-velocypack v0.0.0-20200318135517-5af53c29c67e // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/gookit/goutil v0.6.12
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/minio/sha256-simd v1.0.1 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect

@@ -7,13 +7,13 @@ import (
 	"github.com/ortelius/scec-commons/model"
 )
 
-func TestEmptyJson(t *testing.T) {
+func TestEmptyJson(_ *testing.T) {
 
-	fmt.Printf("let compverdetail=JSON.parse('%s');\n", EmptyJson(model.NewComponentVersionDetails()))
-	fmt.Printf("let applications=JSON.parse('%s');\n", EmptyJson(model.NewApplications()))
-	fmt.Printf("let appver=JSON.parse('%s');\n", EmptyJson(model.NewApplicationVersion()))
-	fmt.Printf("let appverdetail=JSON.parse('%s');\n", EmptyJson(model.NewApplicationVersionDetails()))
-	fmt.Printf("let auditlog=JSON.parse('%s');\n", EmptyJson(model.NewAuditLog()))
-	fmt.Printf("let auditrec=JSON.parse('%s');\n", EmptyJson(model.NewAuditRecord()))
-	fmt.Printf("let compattrs=JSON.parse('%s');\n", EmptyJson(model.NewCompAttrs()))
+	fmt.Printf("let compverdetail=JSON.parse('%s');\n", EmptyJSON(model.NewComponentVersionDetails()))
+	fmt.Printf("let applications=JSON.parse('%s');\n", EmptyJSON(model.NewApplications()))
+	fmt.Printf("let appver=JSON.parse('%s');\n", EmptyJSON(model.NewApplicationVersion()))
+	fmt.Printf("let appverdetail=JSON.parse('%s');\n", EmptyJSON(model.NewApplicationVersionDetails()))
+	fmt.Printf("let auditlog=JSON.parse('%s');\n", EmptyJSON(model.NewAuditLog()))
+	fmt.Printf("let auditrec=JSON.parse('%s');\n", EmptyJSON(model.NewAuditRecord()))
+	fmt.Printf("let compattrs=JSON.parse('%s');\n", EmptyJSON(model.NewCompAttrs()))
 }

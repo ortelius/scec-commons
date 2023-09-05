@@ -415,7 +415,8 @@ func MakeJSON(cid string) (string, bool) {
 	return jsonStr, exists
 }
 
-func EmptyJson(obj any) string {
+// EmptyJSON will convert a struct into an empty JSON string that includes all fields and nested fields.
+func EmptyJSON(obj any) string {
 	structStr := litter.Sdump(obj)
 	r := regexp.MustCompile("&.*{")
 	structStr = r.ReplaceAllString(structStr, "{")
@@ -438,6 +439,9 @@ func EmptyJson(obj any) string {
 	structStr = strings.ToLower(structStr)
 
 	dst := &bytes.Buffer{}
-	json.Compact(dst, []byte(structStr))
+	if err := json.Compact(dst, []byte(structStr)); err != nil {
+		fmt.Printf("%+v", err)
+		return ""
+	}
 	return dst.String()
 }
