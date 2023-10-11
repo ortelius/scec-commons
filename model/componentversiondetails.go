@@ -24,6 +24,7 @@ type ComponentVersionDetails struct {
 	PredecessorKey  string           `json:"predecessor_key,omitempty"`
 	Providing       *Providing       `json:"providing,omitempty"`
 	Readme          *Readme          `json:"readme,omitempty"`
+	SBOM            *SBOM            `json:"sbom,omitempty"`
 	Swagger         *Swagger         `json:"swagger,omitempty"`
 	Vulnerabilities *Vulnerabilities `json:"vulnerabilties,omitempty"`
 }
@@ -43,5 +44,6 @@ func NewComponentVersionDetails() *ComponentVersionDetails {
 		Providing:       NewProviding(),
 		Readme:          NewReadme(),
 		Swagger:         NewSwagger(),
+		SBOM:            NewSBOM(),
 		Vulnerabilities: NewVulnerabilities()}
 }
