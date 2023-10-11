@@ -24,7 +24,7 @@ type ComponentVersionDetails struct {
 	PredecessorKey  string           `json:"predecessor_key,omitempty"`
 	Providing       *Providing       `json:"providing,omitempty"`
 	Readme          *Readme          `json:"readme,omitempty"`
-	SBOM            *SBOM            `json:"sbom,omitempty"`
+	SBOMKey         string           `json:"sbom_key,omitempty"`
 	Swagger         *Swagger         `json:"swagger,omitempty"`
 	Vulnerabilities *Vulnerabilities `json:"vulnerabilties,omitempty"`
 }
