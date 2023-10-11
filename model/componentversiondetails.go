@@ -44,6 +44,5 @@ func NewComponentVersionDetails() *ComponentVersionDetails {
 		Providing:       NewProviding(),
 		Readme:          NewReadme(),
 		Swagger:         NewSwagger(),
-		SBOM:            NewSBOM(),
 		Vulnerabilities: NewVulnerabilities()}
 }
