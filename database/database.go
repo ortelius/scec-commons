@@ -63,7 +63,7 @@ func InitLogger() *zap.Logger {
 }
 
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
-func InitializeDB() DBConnection {
+func InitializeDB(collectionName string) DBConnection {
 
 	var db driver.Database
 	var col driver.Collection
@@ -71,6 +71,10 @@ func InitializeDB() DBConnection {
 	var client driver.Client
 	var err error
 	const databaseName = "ortelius"
+
+	if collectionName == "" {
+		collectionName = "evidence"
+	}
 
 	ctx := context.Background()
 
@@ -115,13 +119,13 @@ func InitializeDB() DBConnection {
 			}
 		}
 
-		exists, _ = db.CollectionExists(ctx, "evidence")
+		exists, _ = db.CollectionExists(ctx, collectionName)
 		if exists {
-			if col, err = db.Collection(ctx, "evidence"); err != nil {
+			if col, err = db.Collection(ctx, collectionName); err != nil {
 				logger.Sugar().Fatalf("Failed to use collection: %v", err)
 			}
 		} else {
-			if col, err = db.CreateCollection(ctx, "evidence", nil); err != nil {
+			if col, err = db.CreateCollection(ctx, collectionName, nil); err != nil {
 				logger.Sugar().Fatalf("Failed to create collection: %v", err)
 			}
 		}
