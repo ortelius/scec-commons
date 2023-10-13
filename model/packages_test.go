@@ -17,22 +17,24 @@ func TestPackages(t *testing.T) {
 				"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 				"name": "libc-bin",
 				"version": "2.19.18+deb8u7",
-				"license_key": 23,
-				"license": "GP-2.0"
+				"license": "GP-2.0",
+				"cve": "OSVDEV-1",
+				"summary": "test cve"
 			},
 			{
 				"objtype": "Package",
 				"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
 				"name": "libcpp-bin",
 				"version": "2.19.18+deb8u7",
-				"license_key": 23,
-				"license": "GP-2.0"
+				"license": "GP-2.0",
+				"cve": "OSVDEV-2",
+				"summary": "another test cve"
 			}
 		]
 	}`)
 
-	expected := "{\"objtype\":\"Packages\",\"packages\":[{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"},{\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}]}"
-	expectedCid := "bafkreicrzo2siragfgs2z6a7ptsua4uzl5qwsi6ulfr5rszyafutmkf4hm"
+	expected := "{\"objtype\":\"Packages\",\"packages\":[{\"cve\":\"OSVDEV-1\",\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"summary\":\"test cve\",\"version\":\"2.19.18+deb8u7\"},{\"cve\":\"OSVDEV-2\",\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"summary\":\"another test cve\",\"version\":\"2.19.18+deb8u7\"}]}"
+	expectedCid := "bafkreifkosx2sdtbq7qqgpsrvneea2qmbbkujej5tmjmyuw5usfi6un2wa"
 
 	// define user object to marshal into
 	obj := NewPackages()

@@ -46,22 +46,24 @@ func TestComponentVersionDetails(t *testing.T) {
 		"packages": {
 			"objtype": "Packages",
 			"packages": [{
-					"objtype": "Package",
-					"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
-					"name": "libc-bin",
-					"version": "2.19.18+deb8u7",
-					"license_key": 23,
-					"license": "GP-2.0"
-				},
-				{
-					"objtype": "Package",
-					"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
-					"name": "libcpp-bin",
-					"version": "2.19.18+deb8u7",
-					"license_key": 23,
-					"license": "GP-2.0"
-				}
-			]
+				"objtype": "Package",
+				"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
+				"name": "libc-bin",
+				"version": "2.19.18+deb8u7",
+				"license": "GP-2.0",
+				"cve": "OSVDEV-1",
+				"summary": "test cve"
+			},
+			{
+				"objtype": "Package",
+				"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
+				"name": "libcpp-bin",
+				"version": "2.19.18+deb8u7",
+				"license": "GP-2.0",
+				"cve": "OSVDEV-2",
+				"summary": "another test cve"
+			}
+		]
 		},
 		"vulnerabilties": {
 			"objtype": "Vulnerabilties",
@@ -101,8 +103,8 @@ func TestComponentVersionDetails(t *testing.T) {
 		}
 	}`)
 
-	expected := "{\"attrs\":{\"builddate\":\"0001-01-01T00:00:00Z\",\"gitbranchcreatetimestamp\":\"0001-01-01T00:00:00Z\",\"gitcommittimestamp\":\"0001-01-01T00:00:00Z\",\"objtype\":\"CompAttrs\",\"serviceowner\":{\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"User\"}},\"autditlog\":{\"objtype\":\"AuditLog\"},\"comptype\":\"docker\",\"consuming\":{\"consumes\":[\"/user\"],\"objtype\":\"Consuming\"},\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"license\":{\"content\":[\"# Apache 2\",\"## Summary\"],\"objtype\":\"License\"},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"ComponentVersionDetails\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"packages\":{\"objtype\":\"Packages\",\"packages\":[{\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"},{\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"version\":\"2.19.18+deb8u7\"}]},\"providing\":{\"objtype\":\"Providing\",\"provides\":[\"/user\"]},\"readme\":{\"content\":[\"# README\",\"## Sample\"],\"objtype\":\"Readme\"},\"swagger\":{\"content\":[\"# Rest APIs\",\"## GET /user\"],\"objtype\":\"Swagger\"},\"vulnerabilties\":{\"objtype\":\"Vulnerabilties\",\"vulnerabilties\":[{\"name\":\"CVE-1824\",\"objtype\":\"Vulnerabilty\"},{\"name\":\"CVE-1823\",\"objtype\":\"Vulnerabilty\"}]}}"
-	expectedCid := "bafkreifvzrm7nxs6l4bdm6n4crg2s2rpxopnflf7hu7sb4tjyus6xufkom"
+	expected := "{\"attrs\":{\"builddate\":\"0001-01-01T00:00:00Z\",\"gitbranchcreatetimestamp\":\"0001-01-01T00:00:00Z\",\"gitcommittimestamp\":\"0001-01-01T00:00:00Z\",\"objtype\":\"CompAttrs\",\"serviceowner\":{\"domain\":{\"name\":\"\",\"objtype\":\"Domain\"},\"name\":\"\",\"objtype\":\"User\"}},\"autditlog\":{\"objtype\":\"AuditLog\"},\"comptype\":\"docker\",\"consuming\":{\"consumes\":[\"/user\"],\"objtype\":\"Consuming\"},\"created\":\"2023-04-23T10:20:30.4+02:30\",\"creator\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"domain\":{\"name\":\"GLOBAL.My Project\",\"objtype\":\"Domain\"},\"license\":{\"content\":[\"# Apache 2\",\"## Summary\"],\"objtype\":\"License\"},\"name\":\"Hello World;v1.0.0\",\"objtype\":\"ComponentVersionDetails\",\"owner\":{\"domain\":{\"name\":\"GLOBAL\",\"objtype\":\"Domain\"},\"email\":\"admin@ortelius.io\",\"name\":\"admin\",\"objtype\":\"User\",\"phone\":\"505-444-5566\",\"realname\":\"Ortelius Admin\"},\"packages\":{\"objtype\":\"Packages\",\"packages\":[{\"cve\":\"OSVDEV-1\",\"license\":\"GP-2.0\",\"name\":\"libc-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"summary\":\"test cve\",\"version\":\"2.19.18+deb8u7\"},{\"cve\":\"OSVDEV-2\",\"license\":\"GP-2.0\",\"name\":\"libcpp-bin\",\"objtype\":\"Package\",\"purl\":\"pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8\",\"summary\":\"another test cve\",\"version\":\"2.19.18+deb8u7\"}]},\"providing\":{\"objtype\":\"Providing\",\"provides\":[\"/user\"]},\"readme\":{\"content\":[\"# README\",\"## Sample\"],\"objtype\":\"Readme\"},\"swagger\":{\"content\":[\"# Rest APIs\",\"## GET /user\"],\"objtype\":\"Swagger\"}}"
+	expectedCid := "bafkreicx2za4oyywjcv7xuks2guvisqyh22n5bvtm4xzhuytucpyi4u4aq"
 
 	// define user object to marshal into
 	obj := NewComponentVersionDetails()
