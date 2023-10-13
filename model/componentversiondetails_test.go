@@ -44,22 +44,22 @@ func TestComponentVersionDetails(t *testing.T) {
 		"created": "2023-04-23T10:20:30.400+02:30",
 		"comptype": "docker",
 		"packages": [{
-			"objtype": "Package",
-			"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
-			"name": "libc-bin",
-			"version": "2.19.18+deb8u7",
-			"license": "GP-2.0",
 			"cve": "OSVDEV-1",
-			"summary": "test cve"
+			"language": "c++",
+			"license": "GP-2.0",
+			"name": "libc-bin",
+			"purl": "pkg:deb/debian/libc-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
+			"summary": "test cve",
+			"version": "2.19.18+deb8u7"
 		},
 		{
-			"objtype": "Package",
-			"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
-			"name": "libcpp-bin",
-			"version": "2.19.18+deb8u7",
-			"license": "GP-2.0",
 			"cve": "OSVDEV-2",
-			"summary": "another test cve"
+			"language": "c++",
+			"license": "GP-2.0",
+			"name": "libcpp-bin",
+			"purl": "pkg:deb/debian/libcpp-bin@2.19-18+deb8u7?arch=amd64&upstream=glibc&distro=debian-8",
+			"summary": "another test cve",
+			"version": "2.19.18+deb8u7"
 		}],
 		"readme": {
 			"objtype": "Readme",
