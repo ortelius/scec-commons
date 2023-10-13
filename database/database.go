@@ -422,6 +422,7 @@ func MakeJSON(cid string) (string, bool) {
 // EmptyJSON will convert a struct into an empty JSON string that includes all fields and nested fields.
 func EmptyJSON(obj any) string {
 	structStr := litter.Sdump(obj)
+
 	r := regexp.MustCompile("&.*{")
 	structStr = r.ReplaceAllString(structStr, "{")
 
@@ -429,7 +430,7 @@ func EmptyJSON(obj any) string {
 	structStr = r.ReplaceAllString(structStr, "\"\"")
 
 	r = regexp.MustCompile("nil")
-	structStr = r.ReplaceAllString(structStr, "\"\"")
+	structStr = r.ReplaceAllString(structStr, "[]")
 
 	r = regexp.MustCompile(`([^\s]+):`)
 	structStr = r.ReplaceAllString(structStr, "\"$1\":")

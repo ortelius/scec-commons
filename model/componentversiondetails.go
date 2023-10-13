@@ -11,15 +11,15 @@ type ComponentVersionDetails struct {
 	ObjType        string     `json:"objtype,omitempty"`
 	Attrs          *CompAttrs `json:"attrs,omitempty"`
 	AuditLog       *AuditLog  `json:"autditlog,omitempty"`
-	CompType       string     `json:"comptype"`
+	CompType       string     `json:"comptype,omitempty"`
 	Consuming      *Consuming `json:"consuming,omitempty"`
-	Created        time.Time  `json:"created"`
-	Creator        *User      `json:"creator"`
-	Domain         *Domain    `json:"domain"`
+	Created        time.Time  `json:"created,omitempty"`
+	Creator        *User      `json:"creator,omitempty"`
+	Domain         *Domain    `json:"domain,omitempty"`
 	License        *License   `json:"license,omitempty"`
-	Name           string     `json:"name"`
-	Owner          *User      `json:"owner"`
-	Packages       *Packages  `json:"packages,omitempty"`
+	Name           string     `json:"name,omitempty"`
+	Owner          *User      `json:"owner,omitempty"`
+	Packages       []*Package `json:"packages,omitempty"`
 	ParentKey      string     `json:"parent_key,omitempty"`
 	PredecessorKey string     `json:"predecessor_key,omitempty"`
 	Providing      *Providing `json:"providing,omitempty"`
@@ -39,7 +39,6 @@ func NewComponentVersionDetails() *ComponentVersionDetails {
 		Domain:    NewDomain(),
 		License:   NewLicense(),
 		Owner:     NewUser(),
-		Packages:  NewPackages(),
 		Providing: NewProviding(),
 		Readme:    NewReadme(),
 		Swagger:   NewSwagger()}

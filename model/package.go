@@ -5,12 +5,12 @@ package model
 type Package struct {
 	Key     string `json:"_key,omitempty"`
 	ObjType string `json:"objtype,omitempty"`
-	CVE     string `json:"cve"`
+	CVE     string `json:"cve,omitempty"`
 	License string `json:"license,omitempty"`
-	Name    string `json:"name"`
+	Name    string `json:"name,omitempty"`
 	Purl    string `json:"purl,omitempty"`
-	Summary string `json:"summary"`
-	Version string `json:"version"`
+	Summary string `json:"summary,omitempty"`
+	Version string `json:"version,omitempty"`
 }
 
 // NewPackage is the contructor that sets the appropriate default values
