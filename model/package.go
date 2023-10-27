@@ -3,13 +3,14 @@ package model
 
 // Package defines a SBOM package dependency (subset of the full sbom)
 type Package struct {
-	CVE      string `json:"cve"`
-	Language string `json:"language"`
-	License  string `json:"license"`
-	Name     string `json:"name"`
-	Purl     string `json:"purl"`
-	Summary  string `json:"summary"`
-	Version  string `json:"version"`
+	CVE      string  `json:"cve"`
+	Language string  `json:"language"`
+	License  string  `json:"license"`
+	Name     string  `json:"name"`
+	Purl     string  `json:"purl"`
+	Score    float64 `json:"score"`
+	Summary  string  `json:"summary"`
+	Version  string  `json:"version"`
 }
 
 // NewPackage is the contructor that sets the appropriate default values
