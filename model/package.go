@@ -9,6 +9,7 @@ type Package struct {
 	Name     string  `json:"name"`
 	Purl     string  `json:"purl"`
 	Score    float64 `json:"score"`
+	Severity string  `json:"severity"`
 	Summary  string  `json:"summary"`
 	Version  string  `json:"version"`
 }
