@@ -5,10 +5,14 @@ package database
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"io"
+	"net"
+	"net/http"
 	"os"
 	"reflect"
 	"regexp"
+	"time"
 
 	"encoding/json"
 	"fmt"
@@ -16,8 +20,8 @@ import (
 	"strconv"
 	"strings"
 
-	driver "github.com/arangodb/go-driver/v2/arangodb"
-	http "github.com/arangodb/go-driver/v2/connection"
+	"github.com/arangodb/go-driver/v2/arangodb"
+	"github.com/arangodb/go-driver/v2/connection"
 	cid "github.com/ipfs/go-cid"
 	"github.com/sanity-io/litter"
 	"go.uber.org/zap"
@@ -36,8 +40,8 @@ var logger = InitLogger() // setup the logger
 
 // DBConnection is the structure that defined the database engine and collections
 type DBConnection struct {
-	Collection driver.Collection
-	Database   driver.Database
+	Collection arangodb.Collection
+	Database   arangodb.Database
 }
 
 var initDone = false          // has the data been initialized
@@ -62,14 +66,30 @@ func InitLogger() *zap.Logger {
 	return logger
 }
 
+func dbJSONHTTPConnectionConfig(endpoint connection.Endpoint, dbuser string, dbpass string) connection.HttpConfiguration {
+	return connection.HttpConfiguration{
+		Authentication: connection.NewBasicAuth(dbuser, dbpass),
+		Endpoint:       endpoint,
+		ContentType:    connection.ApplicationJSON,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 90 * time.Second,
+			}).DialContext,
+			MaxIdleConns:          100,
+			IdleConnTimeout:       90 * time.Second,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+		},
+	}
+}
+
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
 func InitializeDB(collectionName string) DBConnection {
 
-	var db driver.Database
-	var col driver.Collection
-	var conn driver.Connection
-	var client driver.Client
-	var err error
+	var db arangodb.Database
+	var col arangodb.Collection
 	const databaseName = "ortelius"
 
 	if collectionName == "" {
@@ -88,55 +108,58 @@ func InitializeDB(collectionName string) DBConnection {
 	dbpass := GetEnvDefault("ARANGO_PASS", "")
 	dburl := GetEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
 
-	if conn, err = http.NewHttpConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
-		logger.Sugar().Fatalf("Failed to create HTTP connection: %v", err)
+	// Create an HTTP connection to the database
+	endpoint := connection.NewRoundRobinEndpoints([]string{dburl})
+	conn := connection.NewHttpConnection(dbJSONHTTPConnectionConfig(endpoint, dbuser, dbpass))
+
+	// Create a client
+	client := arangodb.NewClient(conn)
+
+	// Ask the version of the server
+	versionInfo, err := client.Version(context.Background())
+	if err != nil {
+		logger.Sugar().Infof("Failed to get version info: %v", err)
+	} else {
+		logger.Sugar().Infof("Database has version '%s' and license '%s'\n", versionInfo.Version, versionInfo.License)
+	}
+	exists := false
+	dblist, _ := client.Databases(ctx)
+
+	for _, dbinfo := range dblist {
+		if dbinfo.Name() == databaseName {
+			exists = true
+			break
+		}
 	}
 
-	_, err = conn.SetAuthentication(driver.BasicAuthentication(dbuser, dbpass))
-
-	if err == nil {
-		if client, err = driver.NewClient(driver.ClientConfig{Connection: conn}); err != nil {
-			logger.Sugar().Fatalf("Failed to create Client: %v", err)
+	if exists {
+		if db, err = client.Database(ctx, databaseName); err != nil {
+			logger.Sugar().Fatalf("Failed to create Database: %v", err)
 		}
-
-		exists := false
-		dblist, _ := client.Databases(ctx)
-
-		for _, dbinfo := range dblist {
-			if dbinfo.Name() == databaseName {
-				exists = true
-				break
-			}
-		}
-
-		if exists {
-			if db, err = client.Database(ctx, databaseName); err != nil {
-				logger.Sugar().Fatalf("Failed to create Database: %v", err)
-			}
-		} else {
-			if db, err = client.CreateDatabase(ctx, databaseName, nil); err != nil {
-				logger.Sugar().Fatalf("Failed to create Database: %v", err)
-			}
-		}
-
-		exists, _ = db.CollectionExists(ctx, collectionName)
-		if exists {
-			if col, err = db.Collection(ctx, collectionName); err != nil {
-				logger.Sugar().Fatalf("Failed to use collection: %v", err)
-			}
-		} else {
-			if col, err = db.CreateCollection(ctx, collectionName, nil); err != nil {
-				logger.Sugar().Fatalf("Failed to create collection: %v", err)
-			}
-		}
-
-		initDone = true
-
-		dbConnection = DBConnection{
-			Database:   db,
-			Collection: col,
+	} else {
+		if db, err = client.CreateDatabase(ctx, databaseName, nil); err != nil {
+			logger.Sugar().Fatalf("Failed to create Database: %v", err)
 		}
 	}
+
+	exists, _ = db.CollectionExists(ctx, collectionName)
+	if exists {
+		if col, err = db.Collection(ctx, collectionName); err != nil {
+			logger.Sugar().Fatalf("Failed to use collection: %v", err)
+		}
+	} else {
+		if col, err = db.CreateCollection(ctx, collectionName, nil); err != nil {
+			logger.Sugar().Fatalf("Failed to create collection: %v", err)
+		}
+	}
+
+	initDone = true
+
+	dbConnection = DBConnection{
+		Database:   db,
+		Collection: col,
+	}
+
 	return dbConnection
 }
 
