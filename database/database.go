@@ -16,8 +16,8 @@ import (
 	"strconv"
 	"strings"
 
-	driver "github.com/arangodb/go-driver"
-	"github.com/arangodb/go-driver/http"
+	driver "github.com/arangodb/go-driver/v2/arangodb"
+	http "github.com/arangodb/go-driver/v2/connection"
 	cid "github.com/ipfs/go-cid"
 	"github.com/sanity-io/litter"
 	"go.uber.org/zap"
@@ -88,7 +88,7 @@ func InitializeDB(collectionName string) DBConnection {
 	dbpass := GetEnvDefault("ARANGO_PASS", "")
 	dburl := GetEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
 
-	if conn, err = http.NewConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
+	if conn, err = http.NewHttpConnection(http.ConnectionConfig{Endpoints: []string{dburl}}); err != nil {
 		logger.Sugar().Fatalf("Failed to create HTTP connection: %v", err)
 	}
 

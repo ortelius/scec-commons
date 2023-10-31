@@ -11,12 +11,21 @@ retract (
 
 require (
 	github.com/arangodb/go-driver/v2 v2.0.3
-	github.com/arangodb/go-driver/v2 v2.0.3
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multicodec v0.9.0
 	github.com/multiformats/go-multihash v0.2.3
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.26.0
+)
+
+require (
+	github.com/dchest/siphash v1.2.3 // indirect
+	github.com/google/uuid v1.4.0 // indirect
+	github.com/kkdai/maglev v0.2.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/rs/zerolog v1.31.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
 )
 
 require (
