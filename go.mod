@@ -10,7 +10,7 @@ retract (
 )
 
 require (
-	github.com/arangodb/go-driver v1.6.1
+	github.com/arangodb/go-driver/v2 v2.0.3
 	github.com/arangodb/go-driver/v2 v2.0.3
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multicodec v0.9.0
