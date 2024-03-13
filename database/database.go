@@ -22,6 +22,7 @@ import (
 
 	"github.com/arangodb/go-driver/v2/arangodb"
 	"github.com/arangodb/go-driver/v2/connection"
+	"github.com/cenkalti/backoff"
 	cid "github.com/ipfs/go-cid"
 	"github.com/sanity-io/litter"
 	"go.uber.org/zap"
@@ -87,8 +88,24 @@ func dbJSONHTTPConnectionConfig(endpoint connection.Endpoint, dbuser string, dbp
 	}
 }
 
+// checkClientHealt is used to check the connections health
+func checkClientHealth(client arangodb.Client) error {
+
+	health, err := client.Health(context.Background())
+	if err != nil {
+		fmt.Printf("Error checking client health: %v\n", err)
+		return err
+	}
+
+	fmt.Printf("ArangoDB client health: %v\n", health)
+	return nil
+}
+
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
 func InitializeDB(collectionName string) DBConnection {
+
+	const initialInterval = 10 * time.Second
+	const maxInterval = 2 * time.Minute
 
 	var db arangodb.Database
 	var col arangodb.Collection
@@ -110,12 +127,31 @@ func InitializeDB(collectionName string) DBConnection {
 	dbpass := GetEnvDefault("ARANGO_PASS", "")
 	dburl := GetEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
 
-	// Create an HTTP connection to the database
-	endpoint := connection.NewRoundRobinEndpoints([]string{dburl})
-	conn := connection.NewHttpConnection(dbJSONHTTPConnectionConfig(endpoint, dbuser, dbpass))
+	var client arangodb.Client
 
-	// Create a client
-	client := arangodb.NewClient(conn)
+	// Configure exponential backoff
+	bo := backoff.NewExponentialBackOff()
+	bo.InitialInterval = initialInterval
+	bo.MaxInterval = maxInterval
+	bo.MaxElapsedTime = 0 // Set to 0 for indefinite retries
+
+	// Retry logic
+	err := backoff.RetryNotify(func() error {
+		fmt.Println("Attempting to connect to ArangoDB")
+		endpoint := connection.NewRoundRobinEndpoints([]string{dburl})
+		conn := connection.NewHttpConnection(dbJSONHTTPConnectionConfig(endpoint, dbuser, dbpass))
+
+		client = arangodb.NewClient(conn)
+		// Check the health of the client
+		if err := checkClientHealth(client); err != nil {
+			return err
+		}
+
+		return nil
+	}, bo, func(err error, _ time.Duration) {
+		// Optionally, you can add a message here to be printed after each retry
+		fmt.Printf("Retrying connection to ArangoDB...\n")
+	})
 
 	// Ask the version of the server
 	versionInfo, err := client.Version(context.Background())
