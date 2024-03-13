@@ -142,24 +142,25 @@ func InitializeDB(collectionName string) DBConnection {
 		conn := connection.NewHttpConnection(dbJSONHTTPConnectionConfig(endpoint, dbuser, dbpass))
 
 		client = arangodb.NewClient(conn)
-		// Check the health of the client
-		if err := checkClientHealth(client); err != nil {
+
+		// Ask the version of the server
+		versionInfo, err := client.Version(context.Background())
+		if err != nil {
 			return err
 		}
 
+		logger.Sugar().Infof("Database has version '%s' and license '%s'\n", versionInfo.Version, versionInfo.License)
 		return nil
+
 	}, bo, func(err error, _ time.Duration) {
 		// Optionally, you can add a message here to be printed after each retry
-		fmt.Printf("Retrying connection to ArangoDB...\n")
+		fmt.Printf("Retrying connection to ArangoDB: %v\n", err)
 	})
 
-	// Ask the version of the server
-	versionInfo, err := client.Version(context.Background())
 	if err != nil {
-		logger.Sugar().Infof("Failed to get version info: %v", err)
-	} else {
-		logger.Sugar().Infof("Database has version '%s' and license '%s'\n", versionInfo.Version, versionInfo.License)
+		logger.Sugar().Fatalf("Backoff Error %v\n", err)
 	}
+
 	exists := false
 	dblist, _ := client.Databases(ctx)
 
