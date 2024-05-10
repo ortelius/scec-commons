@@ -88,19 +88,6 @@ func dbJSONHTTPConnectionConfig(endpoint connection.Endpoint, dbuser string, dbp
 	}
 }
 
-// checkClientHealt is used to check the connections health
-func checkClientHealth(client arangodb.Client) error {
-
-	health, err := client.Health(context.Background())
-	if err != nil {
-		fmt.Printf("Error checking client health: %v\n", err)
-		return err
-	}
-
-	fmt.Printf("ArangoDB client health: %v\n", health)
-	return nil
-}
-
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
 func InitializeDB(collectionName string) DBConnection {
 
