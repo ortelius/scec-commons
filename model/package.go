@@ -27,6 +27,7 @@ type PackageLicense struct {
 	Language string  `json:"pkgtype"`
 	License  string  `json:"name"` // name of the license
 	Name     string  `json:"packagename"`
+	Purl     string  `json:"purl"`
 	Score    float64 `json:"score"`
 	Severity string  `json:"risklevel"`
 	Summary  string  `json:"summary"`
@@ -45,6 +46,7 @@ type PackageCVE struct {
 	CVE      string  `json:"name"` // CVE name
 	Language string  `json:"pkgtype"`
 	Name     string  `json:"packagename"`
+	Purl     string  `json:"purl"`
 	Score    float64 `json:"score"`
 	Severity string  `json:"risklevel"`
 	Summary  string  `json:"summary"`
