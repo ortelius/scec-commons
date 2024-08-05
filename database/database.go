@@ -89,8 +89,14 @@ func dbJSONHTTPConnectionConfig(endpoint connection.Endpoint, dbuser string, dbp
 	}
 }
 
+// InitializeDB is for backward compatibilty.  The parameter is no longer used.
+
+func InitializeDB(_ string) DBConnection {
+	return Initialize()
+}
+
 // InitializeDB is the function for connecting to the db engine, creating the database and collections
-func InitializeDB(collectionName string) DBConnection {
+func Initialize() DBConnection {
 
 	const initialInterval = 10 * time.Second
 	const maxInterval = 2 * time.Minute
