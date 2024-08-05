@@ -89,8 +89,7 @@ func dbJSONHTTPConnectionConfig(endpoint connection.Endpoint, dbuser string, dbp
 	}
 }
 
-// InitializeDB is for backward compatibility.  The parameter is no longer used.
-
+// InitializeDB is for backward compatibility.  (Deprecated)
 func InitializeDB(_ string) DBConnection {
 	return InitializeDatabase()
 }
