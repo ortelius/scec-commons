@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/arangodb/go-driver/v2/arangodb"
+	"github.com/arangodb/go-driver/v2/arangodb/shared"
 	"github.com/arangodb/go-driver/v2/connection"
 	"github.com/cenkalti/backoff"
 	cid "github.com/ipfs/go-cid"
@@ -98,9 +99,7 @@ func InitializeDB(collectionName string) DBConnection {
 	var col arangodb.Collection
 	const databaseName = "ortelius"
 
-	if collectionName == "" {
-		collectionName = "evidence"
-	}
+	collectionNames := []string{"applications", "components", "sbom", "vulns"}
 
 	ctx := context.Background()
 
@@ -168,15 +167,112 @@ func InitializeDB(collectionName string) DBConnection {
 		}
 	}
 
-	exists, _ = db.CollectionExists(ctx, collectionName)
-	if exists {
-		if col, err = db.Collection(ctx, collectionName); err != nil {
-			logger.Sugar().Fatalf("Failed to use collection: %v", err)
+	for _, collectionName := range collectionNames {
+		exists, _ = db.CollectionExists(ctx, collectionName)
+		if exists {
+			if col, err = db.Collection(ctx, collectionName); err != nil {
+				logger.Sugar().Fatalf("Failed to use collection: %v", err)
+			}
+		} else {
+			if col, err = db.CreateCollection(ctx, collectionName, nil); err != nil {
+				logger.Sugar().Fatalf("Failed to create collection: %v", err)
+			}
 		}
-	} else {
-		if col, err = db.CreateCollection(ctx, collectionName, nil); err != nil {
-			logger.Sugar().Fatalf("Failed to create collection: %v", err)
+	}
+
+	False := false
+	// Define the index options
+	indexOptions := arangodb.CreatePersistentIndexOptions{
+		Unique: &False,
+		Sparse: &False,
+		Name:   "package_name",
+	}
+
+	// Create the index
+	_, _, err = col.EnsurePersistentIndex(ctx, []string{"affected[*].package.name"}, &indexOptions)
+	if err != nil {
+		logger.Sugar().Fatalln("Error creating index:", err)
+	}
+
+	indexOptions.Name = "package_purl"
+
+	_, _, err = col.EnsurePersistentIndex(ctx, []string{"affected[*].package.purl"}, &indexOptions)
+	if err != nil {
+		logger.Sugar().Fatalln("Error creating index:", err)
+	}
+
+	// Get or create a graph
+	graphName := "vulnGraph"
+	var graphOpts arangodb.GetGraphOptions
+	var graph arangodb.Graph
+	graph, err = db.Graph(ctx, graphName, &graphOpts)
+
+	if shared.IsNotFound(err) {
+		// Graph does not exist, create it
+		logger.Sugar().Infof("Graph does not exist. Creating... %v", err)
+
+		// Define the edge definitions and vertex collections
+		edgeDefinition := arangodb.EdgeDefinition{
+			Collection: "purl2vulns",
+			From:       []string{"purls"}, // One purl
+			To:         []string{"vulns"}, // Many vulns
 		}
+
+		def := arangodb.GraphDefinition{
+			EdgeDefinitions: []arangodb.EdgeDefinition{edgeDefinition},
+		}
+
+		var options arangodb.CreateGraphOptions
+		graph, err = db.CreateGraph(ctx, graphName, &def, &options)
+		if err != nil {
+			logger.Sugar().Fatalf("Failed to create graph: %v", err)
+		}
+		logger.Sugar().Infoln("Graph created.")
+	}
+
+	// Check if the vertex collection exists
+	vertexCollectionName := "purls"
+
+	_, err = graph.VertexCollection(ctx, vertexCollectionName)
+	if shared.IsNotFound(err) {
+		var options arangodb.CreateVertexCollectionOptions
+		_, err = graph.CreateVertexCollection(ctx, vertexCollectionName, &options)
+		if err != nil {
+			logger.Sugar().Fatalf("Failed to create vertex collection: %v", err)
+		}
+		logger.Sugar().Infoln("Vertex collection created.")
+	} else if err != nil {
+		logger.Sugar().Fatalf("Failed to get vertex collection: %v", err)
+	}
+
+	var vcol arangodb.Collection
+	vcol, err = db.Collection(ctx, vertexCollectionName)
+
+	if err == nil {
+		unique := true
+		indexOptions.Name = "purls_idx"
+		indexOptions.Unique = &unique
+		// Create the index
+		_, _, err = vcol.EnsurePersistentIndex(ctx, []string{"purl"}, &indexOptions)
+		if err != nil {
+			logger.Sugar().Fatalln("Error creating index:", err)
+		}
+	}
+	// Check if the edge collection exists
+	edgeCollectionName := "purl2vulns"
+
+	_, err = db.Collection(ctx, edgeCollectionName)
+	if shared.IsNotFound(err) {
+		var options arangodb.CreateCollectionProperties
+		options.Type = arangodb.CollectionTypeEdge
+
+		_, err = db.CreateCollection(ctx, edgeCollectionName, &options)
+		if err != nil {
+			logger.Sugar().Fatalf("Failed to create edge collection: %v", err)
+		}
+		logger.Sugar().Infoln("Edge collection created.")
+	} else if err != nil {
+		logger.Sugar().Fatalf("Failed to get edge collection: %v", err)
 	}
 
 	initDone = true
