@@ -2,7 +2,7 @@ module github.com/ortelius/scec-commons
 
 go 1.22
 
-toolchain go1.22.5
+toolchain go1.22.6
 
 retract (
 	v1.0.3
@@ -48,7 +48,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.23.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.16.0
+	golang.org/x/text v0.17.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.3.0 // indirect
 )
