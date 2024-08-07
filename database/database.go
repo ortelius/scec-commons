@@ -42,8 +42,8 @@ var logger = InitLogger() // setup the logger
 
 // DBConnection is the structure that defined the database engine and collections
 type DBConnection struct {
-	Collection arangodb.Collection
-	Database   arangodb.Database
+	Collections map[string]arangodb.Collection
+	Database    arangodb.Database
 }
 
 var initDone = false          // has the data been initialized
@@ -89,11 +89,6 @@ func dbJSONHTTPConnectionConfig(endpoint connection.Endpoint, dbuser string, dbp
 	}
 }
 
-// InitializeDB is for backward compatibility.  (Deprecated)
-func InitializeDB(_ string) DBConnection {
-	return InitializeDatabase()
-}
-
 // InitializeDatabase is the function for connecting to the db engine, creating the database and collections
 func InitializeDatabase() DBConnection {
 
@@ -102,8 +97,10 @@ func InitializeDatabase() DBConnection {
 
 	var db arangodb.Database
 	var col arangodb.Collection
+	var collections map[string]arangodb.Collection
 	const databaseName = "ortelius"
 
+	collections = make(map[string]arangodb.Collection)
 	collectionNames := []string{"applications", "components", "sbom", "vulns"}
 
 	ctx := context.Background()
@@ -183,6 +180,8 @@ func InitializeDatabase() DBConnection {
 				logger.Sugar().Fatalf("Failed to create collection: %v", err)
 			}
 		}
+
+		collections[collectionName] = col
 	}
 
 	False := false
@@ -250,15 +249,16 @@ func InitializeDatabase() DBConnection {
 		logger.Sugar().Fatalf("Failed to get vertex collection: %v", err)
 	}
 
-	var vcol arangodb.Collection
-	vcol, err = db.Collection(ctx, vertexCollectionName)
+	col, err = db.Collection(ctx, vertexCollectionName)
+
+	collections[vertexCollectionName] = col
 
 	if err == nil {
 		unique := true
 		indexOptions.Name = "purls_idx"
 		indexOptions.Unique = &unique
 		// Create the index
-		_, _, err = vcol.EnsurePersistentIndex(ctx, []string{"purl"}, &indexOptions)
+		_, _, err = col.EnsurePersistentIndex(ctx, []string{"purl"}, &indexOptions)
 		if err != nil {
 			logger.Sugar().Fatalln("Error creating index:", err)
 		}
@@ -266,7 +266,7 @@ func InitializeDatabase() DBConnection {
 	// Check if the edge collection exists
 	edgeCollectionName := "purl2vulns"
 
-	_, err = db.Collection(ctx, edgeCollectionName)
+	col, err = db.Collection(ctx, edgeCollectionName)
 	if shared.IsNotFound(err) {
 		var options arangodb.CreateCollectionProperties
 		options.Type = arangodb.CollectionTypeEdge
@@ -280,11 +280,13 @@ func InitializeDatabase() DBConnection {
 		logger.Sugar().Fatalf("Failed to get edge collection: %v", err)
 	}
 
+	collections[edgeCollectionName] = col
+
 	initDone = true
 
 	dbConnection = DBConnection{
-		Database:   db,
-		Collection: col,
+		Database:    db,
+		Collections: collections,
 	}
 
 	return dbConnection
