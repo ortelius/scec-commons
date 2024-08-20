@@ -96,7 +96,6 @@ func InitializeDatabase() DBConnection {
 	const maxInterval = 2 * time.Minute
 
 	var db arangodb.Database
-	var col arangodb.Collection
 	var collections map[string]arangodb.Collection
 	const databaseName = "ortelius"
 
@@ -170,6 +169,8 @@ func InitializeDatabase() DBConnection {
 	}
 
 	for _, collectionName := range collectionNames {
+		var col arangodb.Collection
+
 		exists, _ = db.CollectionExists(ctx, collectionName)
 		if exists {
 			if col, err = db.Collection(ctx, collectionName); err != nil {
@@ -193,14 +194,21 @@ func InitializeDatabase() DBConnection {
 	}
 
 	// Create the index
-	_, _, err = col.EnsurePersistentIndex(ctx, []string{"affected[*].package.name"}, &indexOptions)
+	_, _, err = collections["vulns"].EnsurePersistentIndex(ctx, []string{"affected[*].package.name"}, &indexOptions)
 	if err != nil {
 		logger.Sugar().Fatalln("Error creating index:", err)
 	}
 
 	indexOptions.Name = "package_purl"
 
-	_, _, err = col.EnsurePersistentIndex(ctx, []string{"affected[*].package.purl"}, &indexOptions)
+	_, _, err = collections["vulns"].EnsurePersistentIndex(ctx, []string{"affected[*].package.purl"}, &indexOptions)
+	if err != nil {
+		logger.Sugar().Fatalln("Error creating index:", err)
+	}
+
+	indexOptions.Name = "sbom_cid"
+
+	_, _, err = collections["sbom"].EnsurePersistentIndex(ctx, []string{"cid"}, &indexOptions)
 	if err != nil {
 		logger.Sugar().Fatalln("Error creating index:", err)
 	}
@@ -249,6 +257,7 @@ func InitializeDatabase() DBConnection {
 		logger.Sugar().Fatalf("Failed to get vertex collection: %v", err)
 	}
 
+	var col arangodb.Collection
 	col, err = db.Collection(ctx, vertexCollectionName)
 
 	collections[vertexCollectionName] = col
