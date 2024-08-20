@@ -6,6 +6,7 @@ import "encoding/json"
 // SBOM defines a CycloneDX SBOM in JSON format
 type SBOM struct {
 	Key     string          `json:"_key,omitempty"`
+	Cid     string          `json:"cid,omitempty"`
 	ObjType string          `json:"objtype,omitempty"`
 	Content json.RawMessage `json:"content"`
 }
