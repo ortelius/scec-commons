@@ -7,26 +7,26 @@ import (
 
 // ComponentVersionDetails defines a Version of a Component including fine grained details
 type ComponentVersionDetails struct {
-	Key            string     `json:"_key,omitempty"`
-	ObjType        string     `json:"objtype,omitempty"`
-	Attrs          *CompAttrs `json:"attrs,omitempty"`
-	AuditLog       *AuditLog  `json:"autditlog,omitempty"`
-	CompType       string     `json:"comptype,omitempty"`
-	Consuming      *Consuming `json:"consuming,omitempty"`
-	Created        time.Time  `json:"created,omitempty"`
-	Creator        *User      `json:"creator,omitempty"`
-	Domain         *Domain    `json:"domain,omitempty"`
-	License        *License   `json:"license,omitempty"`
-	Name           string     `json:"name,omitempty"`
-	Owner          *User      `json:"owner,omitempty"`
-	Packages       []*Package `json:"packages,omitempty"`
-	ParentKey      string     `json:"parent_key,omitempty"`
-	PredecessorKey string     `json:"predecessor_key,omitempty"`
-	Providing      *Providing `json:"providing,omitempty"`
-	Readme         *Readme    `json:"readme,omitempty"`
-	SBOMKey        string     `json:"sbom_key,omitempty"`
-	ProvenanceKey  string     `json:"provenance_key,omitempty"`
-	Swagger        *Swagger   `json:"swagger,omitempty"`
+	Key           string     `json:"_key,omitempty"`
+	ObjType       string     `json:"objtype,omitempty"`
+	Attrs         *CompAttrs `json:"attrs,omitempty"`
+	AuditLog      *AuditLog  `json:"autditlog,omitempty"`
+	CompType      string     `json:"comptype,omitempty"`
+	Consuming     *Consuming `json:"consuming,omitempty"`
+	Created       time.Time  `json:"created,omitempty"`
+	Creator       *User      `json:"creator,omitempty"`
+	Domain        *Domain    `json:"domain,omitempty"`
+	License       *License   `json:"license,omitempty"`
+	Name          string     `json:"name,omitempty"`
+	Owner         *User      `json:"owner,omitempty"`
+	Packages      []*Package `json:"packages,omitempty"`
+	ProvenanceKey string     `json:"provenance_key,omitempty"`
+	Providing     *Providing `json:"providing,omitempty"`
+	Readme        *Readme    `json:"readme,omitempty"`
+	SBOMKey       string     `json:"sbom_key,omitempty"`
+	Swagger       *Swagger   `json:"swagger,omitempty"`
+	Variant       string     `json:"variant"`
+	Version       string     `json:"version"`
 }
 
 // NewComponentVersionDetails is the contructor that sets the appropriate default values
