@@ -1,7 +1,8 @@
 // Package model - Scorecard defines the struct and handles the OSSF Scorecard for a repo + commit sha
 package model
 
-// Scorecard defines a OSSF scorecard for a repo + commit
+// Scorecard defines a OSSF scorecard for a repo + commit.
+// This struct is a collapsed version of the data returned from the api.scorecard.dev endpoint
 type Scorecard struct {
 	CommitSha            string  `json:"commit_sha"`
 	Pinned               bool    `json:"pinned"`
@@ -26,4 +27,9 @@ type Scorecard struct {
 	DependencyUpdateTool float32 `json:"dependency_update_tool"`
 	SBOM                 float32 `json:"sbom"`
 	Webhooks             float32 `json:"webhooks"`
+}
+
+// NewScorecard is the contructor that sets the appropriate default values
+func NewScorecard() *Scorecard {
+	return &Scorecard{}
 }

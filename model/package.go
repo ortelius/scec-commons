@@ -2,8 +2,10 @@
 package model
 
 // Package defines a SBOM package dependency (subset of the full sbom)
+// This struct is a collapsed version of the data returned from CycloneDX json struct
 type Package struct {
 	CVE      string  `json:"cve"`
+	FixedIn  string  `json:"fixedin"`
 	Language string  `json:"language"`
 	License  string  `json:"license"`
 	Name     string  `json:"name"`
@@ -19,11 +21,17 @@ func NewPackage() *Package {
 	return &Package{}
 }
 
+// NewPackages is the constructor that returns an empty array of Package instances
+func NewPackages() []*Package {
+	return []*Package{}
+}
+
 // NOTE: PackageLicense and PackageCVE are for backward compatibility with v10 frontend
 
 // PackageLicense defines a SBOM package dependency with the corresponding license (subset of the full sbom)
 type PackageLicense struct {
 	Key      string  `json:"key"`
+	FixedIn  string  `json:"fixedin"`
 	Language string  `json:"pkgtype"`
 	License  string  `json:"name"` // name of the license
 	Name     string  `json:"packagename"`
@@ -44,6 +52,7 @@ func NewPackageLicense() *PackageLicense {
 type PackageCVE struct {
 	Key      string  `json:"key"`
 	CVE      string  `json:"name"` // CVE name
+	FixedIn  string  `json:"fixedin"`
 	Language string  `json:"pkgtype"`
 	Name     string  `json:"packagename"`
 	Purl     string  `json:"purl"`
