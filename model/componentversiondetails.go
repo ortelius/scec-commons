@@ -22,10 +22,10 @@ type ComponentVersionDetails struct {
 	License   *License   `json:"license,omitempty"` // In `license` collection via comp2lic graph
 	Name      string     `json:"name,omitempty"`
 	Owner     *User      `json:"owner,omitempty"`
-	Packages  []*Package `json:"packages,omitempty"` // In `sbom` collection via comp2sbom graph
-	Readme    *Readme    `json:"readme,omitempty"`   // In `readme` collection via comp2readme graph
-	Scorecard *Scorecard `json:"scorecard,omitempty"`
-	Swagger   *Swagger   `json:"swagger,omitempty"` // In `swagger` collection via comp2swagger graph
+	Packages  []*Package `json:"packages,omitempty"`  // SBOMs are stored using the compid so we can get them directly
+	Readme    *Readme    `json:"readme,omitempty"`    // In `readme` collection via comp2readme graph
+	Scorecard *Scorecard `json:"scorecard,omitempty"` // Scorecards are stored using the compid so we can get them directly
+	Swagger   *Swagger   `json:"swagger,omitempty"`   // In `swagger` collection via comp2swagger graph
 	Variant   string     `json:"variant,omitempty"`
 	Version   string     `json:"version,omitempty"`
 }

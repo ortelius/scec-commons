@@ -46,6 +46,22 @@ type DBConnection struct {
 	Database    arangodb.Database
 }
 
+// Define a struct to hold the index definition
+type indexConfig struct {
+	Collection string
+	IdxName    string
+	IdxField   string
+}
+
+// Define a struct to hold the graph definition
+type graphConfig struct {
+	GraphName      string
+	Collection     string
+	EdgeCollection string
+	From           string
+	To             string
+}
+
 var initDone = false          // has the data been initialized
 var dbConnection DBConnection // database connection definition
 
@@ -99,15 +115,13 @@ func InitializeDatabase() DBConnection {
 	var collections map[string]arangodb.Collection
 	const databaseName = "ortelius"
 
-	collections = make(map[string]arangodb.Collection)
-	collectionNames := []string{"applications", "components", "sbom", "vulns"}
-
 	ctx := context.Background()
 
 	if initDone {
 		return dbConnection
 	}
 
+	False := false
 	dbhost := GetEnvDefault("ARANGO_HOST", "localhost")
 	dbport := GetEnvDefault("ARANGO_PORT", "8529")
 	dbuser := GetEnvDefault("ARANGO_USER", "root")
@@ -115,6 +129,10 @@ func InitializeDatabase() DBConnection {
 	dburl := GetEnvDefault("ARANGO_URL", "http://"+dbhost+":"+dbport)
 
 	var client arangodb.Client
+
+	//
+	// Database connection with backuoff retry
+	//
 
 	// Configure exponential backoff
 	bo := backoff.NewExponentialBackOff()
@@ -148,6 +166,10 @@ func InitializeDatabase() DBConnection {
 		logger.Sugar().Fatalf("Backoff Error %v\n", err)
 	}
 
+	//
+	// Database creation
+	//
+
 	exists := false
 	dblist, _ := client.Databases(ctx)
 
@@ -168,6 +190,20 @@ func InitializeDatabase() DBConnection {
 		}
 	}
 
+	//
+	// Collection creation for document storage
+	//
+
+	collections = make(map[string]arangodb.Collection)
+	collectionNames := []string{
+		"applications", "components",
+		"sbom", "vulns",
+		"purls", "purl2vulns",
+		"comp2readmes", "readmes",
+		"comp2licenses", "licenses",
+		"comp2swagger", "swagger",
+	}
+
 	for _, collectionName := range collectionNames {
 		var col arangodb.Collection
 
@@ -185,111 +221,71 @@ func InitializeDatabase() DBConnection {
 		collections[collectionName] = col
 	}
 
-	False := false
-	// Define the index options
-	indexOptions := arangodb.CreatePersistentIndexOptions{
-		Unique: &False,
-		Sparse: &False,
-		Name:   "package_name",
+	//
+	// Index creation for each collection.
+	//
+
+	idxList := []indexConfig{
+		{Collection: "vulns", IdxName: "package_name", IdxField: "affected[*].package.name"},
+		{Collection: "vulns", IdxName: "package_purl", IdxField: "affected[*].package.purl"},
+		{Collection: "sbom", IdxName: "sbom_cid", IdxField: "cid"},
+		{Collection: "purls", IdxName: "purls_idx", IdxField: "purl"},
 	}
 
-	// Create the index
-	_, _, err = collections["vulns"].EnsurePersistentIndex(ctx, []string{"affected[*].package.name"}, &indexOptions)
-	if err != nil {
-		logger.Sugar().Fatalln("Error creating index:", err)
-	}
-
-	indexOptions.Name = "package_purl"
-
-	_, _, err = collections["vulns"].EnsurePersistentIndex(ctx, []string{"affected[*].package.purl"}, &indexOptions)
-	if err != nil {
-		logger.Sugar().Fatalln("Error creating index:", err)
-	}
-
-	indexOptions.Name = "sbom_cid"
-
-	_, _, err = collections["sbom"].EnsurePersistentIndex(ctx, []string{"cid"}, &indexOptions)
-	if err != nil {
-		logger.Sugar().Fatalln("Error creating index:", err)
-	}
-
-	// Get or create a graph
-	graphName := "vulnGraph"
-	var graphOpts arangodb.GetGraphOptions
-	var graph arangodb.Graph
-	graph, err = db.Graph(ctx, graphName, &graphOpts)
-
-	if shared.IsNotFound(err) {
-		// Graph does not exist, create it
-		logger.Sugar().Infof("Graph does not exist. Creating... %v", err)
-
-		// Define the edge definitions and vertex collections
-		edgeDefinition := arangodb.EdgeDefinition{
-			Collection: "purl2vulns",
-			From:       []string{"purls"}, // One purl
-			To:         []string{"vulns"}, // Many vulns
+	for _, idx := range idxList {
+		// Define the index options
+		indexOptions := arangodb.CreatePersistentIndexOptions{
+			Unique: &False,
+			Sparse: &False,
+			Name:   idx.IdxName,
 		}
 
-		def := arangodb.GraphDefinition{
-			EdgeDefinitions: []arangodb.EdgeDefinition{edgeDefinition},
-		}
-
-		var options arangodb.CreateGraphOptions
-		graph, err = db.CreateGraph(ctx, graphName, &def, &options)
-		if err != nil {
-			logger.Sugar().Fatalf("Failed to create graph: %v", err)
-		}
-		logger.Sugar().Infoln("Graph created.")
-	}
-
-	// Check if the vertex collection exists
-	vertexCollectionName := "purls"
-
-	_, err = graph.VertexCollection(ctx, vertexCollectionName)
-	if shared.IsNotFound(err) {
-		var options arangodb.CreateVertexCollectionOptions
-		_, err = graph.CreateVertexCollection(ctx, vertexCollectionName, &options)
-		if err != nil {
-			logger.Sugar().Fatalf("Failed to create vertex collection: %v", err)
-		}
-		logger.Sugar().Infoln("Vertex collection created.")
-	} else if err != nil {
-		logger.Sugar().Fatalf("Failed to get vertex collection: %v", err)
-	}
-
-	var col arangodb.Collection
-	col, err = db.Collection(ctx, vertexCollectionName)
-
-	collections[vertexCollectionName] = col
-
-	if err == nil {
-		unique := true
-		indexOptions.Name = "purls_idx"
-		indexOptions.Unique = &unique
 		// Create the index
-		_, _, err = col.EnsurePersistentIndex(ctx, []string{"purl"}, &indexOptions)
+		_, _, err = collections[idx.Collection].EnsurePersistentIndex(ctx, []string{idx.IdxField}, &indexOptions)
 		if err != nil {
 			logger.Sugar().Fatalln("Error creating index:", err)
 		}
 	}
-	// Check if the edge collection exists
-	edgeCollectionName := "purl2vulns"
 
-	col, err = db.Collection(ctx, edgeCollectionName)
-	if shared.IsNotFound(err) {
-		var options arangodb.CreateCollectionProperties
-		options.Type = arangodb.CollectionTypeEdge
+	//
+	// Graph creation for managing relationships
+	//
 
-		_, err = db.CreateCollection(ctx, edgeCollectionName, &options)
-		if err != nil {
-			logger.Sugar().Fatalf("Failed to create edge collection: %v", err)
-		}
-		logger.Sugar().Infoln("Edge collection created.")
-	} else if err != nil {
-		logger.Sugar().Fatalf("Failed to get edge collection: %v", err)
+	graphList := []graphConfig{
+		{GraphName: "vulnGraph", Collection: "purl2vulns", From: "purls", To: "vulns"},               // one purl to many vulns
+		{GraphName: "readmeGraph", Collection: "comp2readmes", From: "components", To: "readmes"},    // many comps to one readme
+		{GraphName: "licenseGraph", Collection: "comp2licenses", From: "components", To: "licenses"}, // many comps to one license
+		{GraphName: "swaggerGraph", Collection: "comp2swagger", From: "components", To: "swagger"},   // many comps to one swagger
 	}
 
-	collections[edgeCollectionName] = col
+	for _, grph := range graphList {
+		var graphOpts arangodb.GetGraphOptions
+
+		_, err = db.Graph(ctx, grph.GraphName, &graphOpts)
+
+		if shared.IsNotFound(err) {
+			// Graph does not exist, create it
+			logger.Sugar().Infof("Graph does not exist. Creating... %v", err)
+
+			// Define the edge definitions and vertex collections
+			edgeDefinition := arangodb.EdgeDefinition{
+				Collection: grph.Collection,
+				From:       []string{grph.From},
+				To:         []string{grph.To},
+			}
+
+			def := arangodb.GraphDefinition{
+				EdgeDefinitions: []arangodb.EdgeDefinition{edgeDefinition},
+			}
+
+			var options arangodb.CreateGraphOptions
+			_, err = db.CreateGraph(ctx, grph.GraphName, &def, &options)
+			if err != nil {
+				logger.Sugar().Fatalf("Failed to create graph: %v", err)
+			}
+			logger.Sugar().Infoln("Graph created.")
+		}
+	}
 
 	initDone = true
 
