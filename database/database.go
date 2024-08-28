@@ -195,14 +195,7 @@ func InitializeDatabase() DBConnection {
 	//
 
 	collections = make(map[string]arangodb.Collection)
-	collectionNames := []string{
-		"applications", "components",
-		"sbom", "vulns",
-		"purls", "purl2vulns",
-		"comp2readmes", "readmes",
-		"comp2licenses", "licenses",
-		"comp2swagger", "swagger",
-	}
+	collectionNames := []string{"applications", "components", "sbom", "vulns", "purls", "readmes", "licenses", "swagger"}
 
 	for _, collectionName := range collectionNames {
 		var col arangodb.Collection
@@ -219,6 +212,28 @@ func InitializeDatabase() DBConnection {
 		}
 
 		collections[collectionName] = col
+	}
+
+	collectionNames = []string{"purl2vulns", "comp2readmes", "comp2licenses", "comp2swagger"}
+	for _, edgeCollectionName := range collectionNames {
+		var col arangodb.Collection
+
+		// Check if the edge collection exists
+		col, err = db.Collection(ctx, edgeCollectionName)
+		if shared.IsNotFound(err) {
+			var options arangodb.CreateCollectionProperties
+			options.Type = arangodb.CollectionTypeEdge
+
+			col, err = db.CreateCollection(ctx, edgeCollectionName, &options)
+			if err != nil {
+				logger.Sugar().Fatalf("Failed to create edge collection: %v", err)
+			}
+			logger.Sugar().Infoln("Edge collection created.")
+		} else if err != nil {
+			logger.Sugar().Fatalf("Failed to get edge collection: %v", err)
+		}
+
+		collections[edgeCollectionName] = col
 	}
 
 	//
