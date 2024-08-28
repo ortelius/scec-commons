@@ -243,7 +243,10 @@ func InitializeDatabase() DBConnection {
 		// Create the index
 		_, _, err = collections[idx.Collection].EnsurePersistentIndex(ctx, []string{idx.IdxField}, &indexOptions)
 		if err != nil {
-			logger.Sugar().Fatalln("Error creating index:", err)
+			if !shared.IsConflict(err) {
+				// Log and exit only if the error is not a conflict (index already exists)
+				logger.Sugar().Fatalln("Error creating index:", err)
+			}
 		}
 	}
 
