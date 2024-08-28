@@ -233,18 +233,29 @@ func InitializeDatabase() DBConnection {
 	}
 
 	for _, idx := range idxList {
-		// Define the index options
-		indexOptions := arangodb.CreatePersistentIndexOptions{
-			Unique: &False,
-			Sparse: &False,
-			Name:   idx.IdxName,
+
+		found := false
+
+		if indexes, err := collections[idx.Collection].Indexes(ctx); err == nil {
+			for _, index := range indexes {
+				if idx.IdxName == index.Name {
+					found = true
+					break
+				}
+			}
 		}
 
-		// Create the index
-		_, _, err = collections[idx.Collection].EnsurePersistentIndex(ctx, []string{idx.IdxField}, &indexOptions)
-		if err != nil {
-			if !shared.IsConflict(err) {
-				// Log and exit only if the error is not a conflict (index already exists)
+		if !found {
+			// Define the index options
+			indexOptions := arangodb.CreatePersistentIndexOptions{
+				Unique: &False,
+				Sparse: &False,
+				Name:   idx.IdxName,
+			}
+
+			// Create the index
+			_, _, err = collections[idx.Collection].EnsurePersistentIndex(ctx, []string{idx.IdxField}, &indexOptions)
+			if err != nil {
 				logger.Sugar().Fatalln("Error creating index:", err)
 			}
 		}
