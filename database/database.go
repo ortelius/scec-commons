@@ -409,8 +409,17 @@ func splitJSON(r rune) bool {
 // addKey2Obj will add Key=cid for nested objects
 func addKey2Obj(obj any, group string, cid string) {
 	fname := cases.Title(language.Und, cases.NoLower).String(group) // change group to match struct field name
-	f := reflect.ValueOf(obj).Elem().FieldByName(fname)             // find the field name in the object
-	if f.IsValid() && f.CanSet() &&                                 // found the field in the object and make sure we can update the field value
+	v := reflect.ValueOf(obj)
+
+	// Check if v is a pointer, and if so, get the underlying value
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	// Now v represents the struct, and you can call FieldByName safely
+	f := v.FieldByName(fname)
+
+	if f.IsValid() && f.CanSet() && // found the field in the object and make sure we can update the field value
 		reflect.TypeOf(f.Interface()).Kind() != reflect.Array && reflect.TypeOf(f.Interface()).Kind() != reflect.Slice { // make sure its not an array/slice
 		fkey := reflect.ValueOf(f.Interface()).Elem().FieldByName("Key") // see of the object we found contains the Key field
 		if fkey.IsValid() && fkey.CanSet() {                             // found the field in the object and make sure we can update the field value
