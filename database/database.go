@@ -529,14 +529,39 @@ func MakeNFT(obj any) (string, string) {
 		}
 
 		for group := range groupmap {
-			sortedJSON := groupmap[group]
-			sort.Strings(sortedJSON)
+			jsonStrings := groupmap[group]
+
+			primitiveCnt := 0
+
+			// If only one entry in the jsonStrings and its a primitive then its a primitive
+			// If more then one entry in the jsonStrings and they are all privitives then its an array
+			// otherwise its an array or a map
+
+			for _, jsonString := range jsonStrings {
+				var result interface{}
+
+				err := json.Unmarshal([]byte(jsonString), &result)
+				if err != nil {
+					continue
+				}
+
+				switch result.(type) {
+				case []interface{}:
+					break
+				case map[string]interface{}:
+					break
+				default:
+					primitiveCnt++
+				}
+			}
 
 			jsonStr := ""
-			if strings.Contains(strings.Join(sortedJSON, ","), ":") {
-				jsonStr = "{" + strings.Join(sortedJSON, ",") + "}"
+			if primitiveCnt == len(jsonStrings) && primitiveCnt > 1 { // array of primitives, dont sort
+				jsonStr = "[" + strings.Join(jsonStrings, ",") + "]"
 			} else {
-				jsonStr = "[" + strings.Join(sortedJSON, ",") + "]"
+				sortedJSON := jsonStrings
+				sort.Strings(sortedJSON)
+				jsonStr = "{" + strings.Join(sortedJSON, ",") + "}"
 			}
 
 			cid := genCid(jsonStr)
