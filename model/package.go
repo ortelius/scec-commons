@@ -31,6 +31,7 @@ func NewPackages() []*Package {
 // PackageLicense defines a SBOM package dependency with the corresponding license (subset of the full sbom)
 type PackageLicense struct {
 	Key      string  `json:"key"`
+	CompID   string  `json:"compid"`
 	FixedIn  string  `json:"fixedin"`
 	Language string  `json:"pkgtype"`
 	License  string  `json:"name"` // name of the license
@@ -51,6 +52,7 @@ func NewPackageLicense() *PackageLicense {
 // PackageCVE defines a SBOM package dependency with the corresponding license (subset of the full sbom)
 type PackageCVE struct {
 	Key      string  `json:"key"`
+	CompID   string  `json:"compid"`
 	CVE      string  `json:"name"` // CVE name
 	FixedIn  string  `json:"fixedin"`
 	Language string  `json:"pkgtype"`
