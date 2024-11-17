@@ -1,8 +1,8 @@
 module github.com/ortelius/scec-commons
 
-go 1.22
+go 1.22.0
 
-toolchain go1.22.6
+toolchain go1.23.3
 
 retract (
 	v1.0.3
@@ -12,7 +12,7 @@ retract (
 )
 
 require (
-	github.com/arangodb/go-driver/v2 v2.1.1
+	github.com/arangodb/go-driver/v2 v2.1.2
 	github.com/ipfs/go-cid v0.4.1
 	github.com/multiformats/go-multicodec v0.9.0
 	github.com/multiformats/go-multihash v0.2.3
@@ -26,8 +26,8 @@ require (
 	github.com/kkdai/maglev v0.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/rs/zerolog v1.32.0 // indirect
-	golang.org/x/net v0.25.0 // indirect
+	github.com/rs/zerolog v1.33.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
 )
 
 require (
@@ -46,9 +46,9 @@ require (
 	github.com/sanity-io/litter v1.5.5
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.23.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/text v0.17.0
+	golang.org/x/crypto v0.29.0 // indirect
+	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/text v0.20.0
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	lukechampine.com/blake3 v1.3.0 // indirect
 )
