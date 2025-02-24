@@ -12,7 +12,7 @@ retract (
 )
 
 require (
-	github.com/arangodb/go-driver/v2 v2.1.2
+	github.com/arangodb/go-driver/v2 v2.1.3
 	github.com/ipfs/go-cid v0.5.0
 	github.com/multiformats/go-multicodec v0.9.0
 	github.com/multiformats/go-multihash v0.2.3
