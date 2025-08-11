@@ -1,6 +1,6 @@
 module github.com/ortelius/scec-commons
 
-go 1.23.8
+go 1.24.2
 
 toolchain go1.24.2
 
