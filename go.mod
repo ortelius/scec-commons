@@ -2,8 +2,6 @@ module github.com/ortelius/scec-commons
 
 go 1.24.2
 
-toolchain go1.24.2
-
 retract (
 	v1.0.3
 	v1.0.2
