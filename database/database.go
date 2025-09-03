@@ -181,7 +181,8 @@ func InitializeDatabase() DBConnection {
 	}
 
 	if exists {
-		if db, err = client.Database(ctx, databaseName); err != nil {
+		var options arangodb.GetDatabaseOptions
+		if db, err = client.GetDatabase(ctx, databaseName, &options); err != nil {
 			logger.Sugar().Fatalf("Failed to create Database: %v", err)
 		}
 	} else {
@@ -202,11 +203,12 @@ func InitializeDatabase() DBConnection {
 
 		exists, _ = db.CollectionExists(ctx, collectionName)
 		if exists {
-			if col, err = db.Collection(ctx, collectionName); err != nil {
+			var options arangodb.GetCollectionOptions
+			if col, err = db.GetCollection(ctx, collectionName, &options); err != nil {
 				logger.Sugar().Fatalf("Failed to use collection: %v", err)
 			}
 		} else {
-			if col, err = db.CreateCollection(ctx, collectionName, nil); err != nil {
+			if col, err = db.CreateCollectionV2(ctx, collectionName, nil); err != nil {
 				logger.Sugar().Fatalf("Failed to create collection: %v", err)
 			}
 		}
@@ -219,12 +221,13 @@ func InitializeDatabase() DBConnection {
 		var col arangodb.Collection
 
 		// Check if the edge collection exists
-		col, err = db.Collection(ctx, edgeCollectionName)
+		var options arangodb.GetCollectionOptions
+		col, err = db.GetCollection(ctx, edgeCollectionName, &options)
 		if shared.IsNotFound(err) {
-			var options arangodb.CreateCollectionProperties
-			options.Type = arangodb.CollectionTypeEdge
-
-			col, err = db.CreateCollection(ctx, edgeCollectionName, &options)
+			edgeType := arangodb.CollectionTypeEdge
+			col, err = db.CreateCollectionV2(ctx, edgeCollectionName, &arangodb.CreateCollectionPropertiesV2{
+				Type: &edgeType,
+			})
 			if err != nil {
 				logger.Sugar().Fatalf("Failed to create edge collection: %v", err)
 			}
